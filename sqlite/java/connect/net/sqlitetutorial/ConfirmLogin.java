@@ -9,12 +9,12 @@ public class ConfirmLogin {
     myC = con;
 
     String correctUserPass = "";
-    String correctUserID = "";
+    String correctUsername = "";
     String correctUserAccount = "";
     if (account == "customer") {
       try {
-        correctUserPass = pullPassword(password);
-        correctUserID = pullID(id);
+        correctUserPass = verifyPassword(id);
+        correctUsername = verifyUsername(id);
         correctUserAccount = pullAccount(id);
       }
       catch (InvalidUsernameException iue) {
@@ -29,8 +29,8 @@ public class ConfirmLogin {
     }
     else if (account == "manager") {
       try {
-        correctUserPass = pullPassword(id);
-        correctUserID = pullID(id);
+        correctUserPass = verifyPassword(id);
+        correctUsername = verifyUsername(id);
         correctUserAccount = pullAccount(id);
       }
       catch (SQLException e) {
@@ -43,17 +43,16 @@ public class ConfirmLogin {
       }
 
     }
+    
+    if (correctUsername.trim().equals(id) == false) {
+        System.out.println("Incorrect account username. Quitting Program...");
+        System.exit(1);
+    }
 
     if (correctUserPass.trim().equals(password) == false) {
         System.out.println("Incorrect password. Quitting Program...");
         System.exit(1);
     }
-
-    if (correctUserID.trim().equals(id) == false) {
-        System.out.println("Incorrect account id. Quitting Program...");
-        System.exit(1);
-    }
-
 
     if (correctUserAccount.trim().equals(account) == false) {
         System.out.println("Incorrect Account type. Quitting Program...");
@@ -62,16 +61,15 @@ public class ConfirmLogin {
 
   }
 
-  private String pullPassword(String password) throws InvalidUsernameException, SQLException {
+  private String verifyPassword(String uname) throws InvalidUsernameException, SQLException {
 	
-    String queryResult = "SELECT * FROM CUSTOMER c WHERE c._password = '" + password + "'";
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.username = '" + uname + "'";
 
     Statement stmt = myC.getConnection().createStatement();
     
     ResultSet rs = stmt.executeQuery(queryResult);
-    
     String pulledPassword = "";
-
+    
     while (rs.next())
     {
       pulledPassword = (rs.getString("_password"));
@@ -80,10 +78,10 @@ public class ConfirmLogin {
     return pulledPassword;
   }
 
-  private String pullID(String uname) throws InvalidUsernameException, SQLException{
+  private String verifyUsername(String uname) throws InvalidUsernameException, SQLException{
 
 
-    String queryResult = "SELECT * FROM MARKET_ACCOUNT m WHERE m.unique_id = '" + uname + "'";
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.username = '" + uname + "'";
         
     Statement stmt = myC.getConnection().createStatement();
         
@@ -93,7 +91,7 @@ public class ConfirmLogin {
 
     while (rs.next())
     {
-      pulledID = (rs.getString("unique_id"));
+      pulledID = (rs.getString("username"));
     }
 
     return pulledID;
@@ -105,7 +103,7 @@ public class ConfirmLogin {
 
     String pulledAccount = "";
     
-    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.unique_ID = '" + uname + "'";
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.username = '" + uname + "'";
     
     Statement stmt = myC.getConnection().createStatement();
 	
@@ -116,11 +114,11 @@ public class ConfirmLogin {
     while (rs.next()){
       a = (rs.getString("isManager"));
     }
-      if(a.trim().equals(1) == true){
-        pulledAccount = "manager";
-      }else{
-        pulledAccount = "customer";
-      }
+    if(a.trim().equals("1") == true){
+      pulledAccount = "manager";
+    }else{
+      pulledAccount = "customer";
+    }
     
 
     return pulledAccount;
