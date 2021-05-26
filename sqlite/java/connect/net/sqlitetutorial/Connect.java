@@ -1,20 +1,15 @@
 package net.sqlitetutorial;
 import java.sql.*;
 
-/**
- *
- * @author sqlitetutorial.net
- */
 public class Connect {
-     /**
-     * Connect to a sample database
-     */
-    public static void connect(){
-        Connection conn = null;
+    
+    private Connection conn;
+
+    Connect() throws SQLException {
         try {
             //db parameters
             // DriverManager.registerDriver(new oracle.jdbc.OracleDriver());	
-            String url = "jdbc:sqlite:/Users/moshehaiem/Documents/CS174A/Project/Project/sqlite/db/chinook.db";
+            String url = "jdbc:sqlite:/Users/patrickkuang/cs174a_project/sqlite/db/chinook.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
@@ -32,12 +27,11 @@ public class Connect {
             }
         }
     }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        connect();
-    }
+
+    public Connection getConnection()
+	{
+		return conn;
+	}
 }
 
 
