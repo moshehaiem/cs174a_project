@@ -83,7 +83,7 @@ public class ConfirmLogin {
   private String pullID(String uname) throws InvalidUsernameException, SQLException{
 
 
-    String queryResult = "SELECT * FROM CUSTOMER c, ACCOUNT a WHERE c.tax_id = a.tax_id AND a.unique_id = '" + uname + "'";
+    String queryResult = "SELECT * FROM MARKET_ACCOUNT m WHERE m.unique_id = '" + uname + "'";
         
     Statement stmt = myC.getConnection().createStatement();
         
@@ -105,7 +105,7 @@ public class ConfirmLogin {
 
     String pulledAccount = "";
     
-    String queryResult = "SELECT * FROM CUSTOMER c, ACCOUNT a WHERE c.tax_id = a.tax_id AND c.username = admin AND c._password = secret AND a.unique_id = '" + uname + "'";
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.unique_ID = '" + uname + "'";
     
     Statement stmt = myC.getConnection().createStatement();
 	
@@ -114,14 +114,14 @@ public class ConfirmLogin {
 
     
     while (rs.next()){
-      a = (rs.getString("tax_id"));
-      if(a.trim().equals("1000") == true){
+      a = (rs.getString("isManager"));
+    }
+      if(a.trim().equals(1) == true){
         pulledAccount = "manager";
       }else{
         pulledAccount = "customer";
       }
-      break;
-    }
+    
 
     return pulledAccount;
   }
