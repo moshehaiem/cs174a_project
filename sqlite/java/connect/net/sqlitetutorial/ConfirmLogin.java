@@ -105,7 +105,7 @@ public class ConfirmLogin {
 
     String pulledAccount = "";
     
-    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.unique_ID = '" + uname + "'";
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.username = '" + uname + "'";
     
     Statement stmt = myC.getConnection().createStatement();
 	
