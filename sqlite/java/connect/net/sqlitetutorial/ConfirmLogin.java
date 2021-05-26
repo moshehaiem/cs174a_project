@@ -13,7 +13,7 @@ public class ConfirmLogin {
     String correctUserAccount = "";
     if (account == "customer") {
       try {
-        correctUserPass = pullPassword(id);
+        correctUserPass = pullPassword(password);
         correctUserID = pullID(id);
         correctUserAccount = pullAccount(id);
       }
@@ -22,6 +22,7 @@ public class ConfirmLogin {
         System.exit(1);
       }
       catch (SQLException e) {
+        System.out.println(e);
         System.out.println("Error getting customer account info. Exiting");
         System.exit(1);
       }
@@ -64,7 +65,7 @@ public class ConfirmLogin {
   private String pullPassword(String password) throws InvalidUsernameException, SQLException {
 	
     String queryResult = "SELECT * FROM CUSTOMER c WHERE c._password = '" + password + "'";
-    
+
     Statement stmt = myC.getConnection().createStatement();
     
     ResultSet rs = stmt.executeQuery(queryResult);

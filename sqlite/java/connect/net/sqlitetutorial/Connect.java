@@ -8,7 +8,6 @@ public class Connect {
     Connect() throws SQLException {
         try {
             //db parameters
-            // DriverManager.registerDriver(new oracle.jdbc.OracleDriver());	
             String url = "jdbc:sqlite:/Users/patrickkuang/cs174a_project/sqlite/db/chinook.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
@@ -17,14 +16,6 @@ public class Connect {
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
         }
     }
 
