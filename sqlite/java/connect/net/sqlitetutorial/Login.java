@@ -177,7 +177,7 @@ public class Login {
       Statement st = con.getConnection().createStatement();
             
 			try {
-				st.executeQuery(insertData);
+				ResultSet rs = st.executeQuery(insertData);
         System.out.println("Account succesfully created");
 			} catch (Exception e) {
 				System.out.println(e);
