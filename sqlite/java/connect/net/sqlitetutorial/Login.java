@@ -21,7 +21,7 @@ public class Login {
       System.exit(1);
     }
 
-    System.out.println("Enter account id:");
+    System.out.println("Enter account username:");
 
     try {
       userID = br.readLine();

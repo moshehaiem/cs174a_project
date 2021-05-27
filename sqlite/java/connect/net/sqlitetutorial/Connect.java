@@ -8,7 +8,7 @@ public class Connect {
     Connect() throws SQLException {
         try {
             //db parameters
-            String url = "jdbc:sqlite:/Users/patrickkuang/cs174a_project/sqlite/db/chinook.db";
+            String url = "jdbc:sqlite:/User/moshehaiem/CS174A/Project/Project/cs174a_project/sqlite/db/chinook.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
