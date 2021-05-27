@@ -180,7 +180,7 @@ public class Login {
       Statement st = con.getConnection().createStatement();
             
 			try {
-				ResultSet rs = st.executeQuery(insertData);
+				st.executeUpdate(insertData);
         System.out.println("Account succesfully created");
 			} catch (Exception e) {
 				System.out.println(e);
@@ -212,7 +212,7 @@ public class Login {
       st = con.getConnection().createStatement();
             
 			try {
-				rs = st.executeQuery(insertData);
+				st.executeUpdate(insertData);
         System.out.println("Market account succesfully created. 1000$ automatically deposited.");
 			} catch (Exception e) {
 				System.out.println(e);
