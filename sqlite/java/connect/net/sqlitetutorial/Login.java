@@ -56,12 +56,17 @@ public class Login {
         
         if (userType.equals("customer") == true){
           L = new ConfirmLogin("customer", userID, userPwd, con);
-          Customer C = new Customer(userID, con, getUniqueId(userID));
+          try {
+            Customer C = new Customer(userID, con, getUniqueId(userID, con));
+          } catch (SQLException e) {
+            System.out.println("Unique Id unable to be found");
+            System.exit(1);
+          }
           loggedIn = true;
         }
         else if (userType.equals("manager") == true){	
           L = new ConfirmLogin("manager", userID, userPwd, con);
-          Manager M = new Manager(userID, con, getUniqueId(userID));
+          // Manager M = new Manager(userID, con);
           loggedIn = true;
         }
         else{
@@ -244,7 +249,7 @@ public class Login {
 
 
 
-  private static String getUniqueId(String uname, Connect con) throws InvalidUsernameException, SQLException{
+  private static String getUniqueId(String uname, Connect con) throws SQLException{
 
 
     String queryResult = "SELECT * FROM ACCOUNT a, CUSTOMER c WHERE c.tax_id = a.tax_id AND c.username = '" + uname + "'";
@@ -260,8 +265,9 @@ public class Login {
       pulledUI = (rs.getString("unique_id"));
     }
 
-    if (pulledUD.trim().equals(uname)) throw new InvalidUsernameException("Username already taken");
-    else return pulledUI;
+    System.out.println(pulledUI);
+
+    return pulledUI;
   }
 
 }

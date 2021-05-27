@@ -3,7 +3,7 @@ import java.io.*;
 import java.sql.*;
 
 public class Customer {
-  private int customerID;
+  private String customerID;
   private Connect myC;
   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -49,7 +49,7 @@ public class Customer {
 
 
 		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + amount + " WHERE a.unique_id = '" + customerID + "'";
-		rs = st.executeQuery(updateRow);
+		stmt.executeUpdate(updateRow);
 
 
     // queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
