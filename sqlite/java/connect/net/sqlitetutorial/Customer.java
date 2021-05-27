@@ -4,9 +4,10 @@ import java.sql.*;
 
 public class Customer {
   private int customerID;
-  private Connect custConn;
+  private Connect myC;
+  BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-  public void buyStock(){
+  public void buyStock() throws SQLException{
     String stock_type="";
     System.out.println("What stock would you like to buy (SKB, SMD, STC)");
       
@@ -30,7 +31,7 @@ public class Customer {
 
     String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
         
-    Statement stmt = con.getConnection().createStatement();
+    Statement stmt = myC.getConnection().createStatement();
         
     ResultSet rs = stmt.executeQuery(queryResult);
         
@@ -83,8 +84,7 @@ public class Customer {
     
     
   public Customer(String username, Connect conn){
-    custConn = conn;
-    
+    myC = conn;
     System.out.println("Logged in");
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -103,7 +103,13 @@ public class Customer {
       
       switch( command ){
         case "buy stock":
-        buyStock();
+        try {
+          buyStock();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in buying stock. Exiting");
+          System.exit(1);
+        }
         break;
         case "sell stock":
         sellStock();
