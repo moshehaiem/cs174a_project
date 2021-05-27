@@ -6,58 +6,202 @@ public class Login {
   public static void main(String [] args) throws SQLException{
     Connect con = new Connect();
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    String login_create = "";
     String userType = "";
     String userID = "";
     String userPwd = "";
     
     ConfirmLogin L;
-
-    System.out.println("Are you a manager or customer?");
     
+    System.out.println("Are you logging in or creating an account? (Y = login, N = create account)");
     try {
-      userType = br.readLine(); 
+      login_create = br.readLine(); 
     } catch (IOException ioe) {
-      System.out.println("Not an option for account type");
+      System.out.println("Not an available action");
       System.exit(1);
     }
-
-    System.out.println("Enter account username:");
-
-    try {
-      userID = br.readLine();
-    } catch (IOException ioe) {
-      System.out.println("Not an option for account id");
-      System.exit(1);
+    
+    // login
+    if (login_create.trim().equals("Y")) {
+      System.out.println("Are you a manager or customer?");
+      
+      try {
+        userType = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for account type");
+        System.exit(1);
+      }
+      
+      System.out.println("Enter account username:");
+      
+      try {
+        userID = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("Not an option for account id");
+        System.exit(1);
+      }
+      
+      System.out.println("Enter Password:");
+      
+      try {
+        userPwd = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("Not an option for account password");
+        System.exit(1);
+      }
+      
+      boolean loggedIn = false;
+      
+      while (loggedIn == false){
+        
+        if (userType.equals("customer") == true){
+          L = new ConfirmLogin("customer", userID, userPwd, con);
+          Customer C = new Customer(userID, con);
+          loggedIn = true;
+        }
+        else if (userType.equals("manager") == true){	
+          L = new ConfirmLogin("manager", userID, userPwd, con);
+          Manager M = new Manager(userID, con);
+          loggedIn = true;
+        }
+        else{
+          System.out.println("Invalid input");
+          break;
+        }
+      }
     }
+    
+    // create account
+    String name = "";
+    String username = "";
+    String password = "";
+    String address = "";
+    String state = "";
+    String phone = "";
+    String email = "";
+    String taxId = "";
+    String ssn = "";
+    String isManager = "";
+    if (login_create.trim().equals("N")) {
 
-    System.out.println("Enter Password:");
+      System.out.println("What is your name?");
+      try {
+        name = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for name");
+        System.exit(1);
+      }
 
-    try {
-      userPwd = br.readLine();
-    } catch (IOException ioe) {
-      System.out.println("Not an option for account password");
-      System.exit(1);
-    }
+      boolean tryAgain = true;
+      while (tryAgain) {
+        System.out.println("What is your username");
+        try {
+          username = br.readLine(); 
+          verifyUsername(username, con);
+          tryAgain = false;
+        } catch (IOException ioe) {
+          System.out.println("Not an option for username");
+          System.exit(1);
+        } catch (InvalidUsernameException e) {
+          System.out.println(e.getError());
+        }
+      }
 
-    boolean loggedIn = false;
+      System.out.println("Choose a password");
+      try {
+        password = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for password");
+        System.exit(1);
+      }
 
-    while (loggedIn == false){
+      System.out.println("What is your address?");
+      try {
+        address = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for address");
+        System.exit(1);
+      }
 
-      if (userType.equals("customer") == true){
-			  L = new ConfirmLogin("customer", userID, userPwd, con);
-			  Customer C = new Customer(userID, con);
-			  loggedIn = true;
+      System.out.println("What state do you live in?");
+      try {
+        state = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for state");
+        System.exit(1);
+      }
+
+      System.out.println("What is your phone number (10 digit)?");
+      try {
+        phone = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for phone number");
+        System.exit(1);
+      }
+
+      System.out.println("What is your email address?");
+      try {
+        email = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for email");
+        System.exit(1);
+      }
+
+      System.out.println("What is your tax id?");
+      try {
+        taxId = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for tax id");
+        System.exit(1);
+      }
+
+      System.out.println("What is your social security number (9 digits not seperated by hyphen)?");
+      try {
+        ssn = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option for ssn");
+        System.exit(1);
+      }
+
+      System.out.println("Are you a manager or customer (1 = manager, 0 = customer)?");
+      try {
+        isManager = br.readLine(); 
+      } catch (IOException ioe) {
+        System.out.println("Not an option");
+        System.exit(1);
+      }
+
+      String insertData = "INSERT INTO CUSTOMER(_name, username, _password, _address, _state, phone_number, email_address, tax_id, SSN, isManager)" + 
+							 " VALUES('" + name + "','" + username + "','" + password + "','" + address + "','" + state + "','" + phone + "','" + email + "','" + taxId + "','" + ssn + "','" + isManager + "')";
+      
+      Statement st = con.getConnection().createStatement();
+            
+			try {
+				st.executeQuery(insertData);
+        System.out.println("Account succesfully created");
+			} catch (Exception e) {
+				System.out.println(e);
 			}
-		  else if (userType.equals("manager") == true){	
-			  L = new ConfirmLogin("manager", userID, userPwd, con);
-			  Manager M = new Manager(userID, con);
-			  loggedIn = true;
-			}
-		    else{
-			    System.out.println("Invalid input");
-			    break;
-			}
-
     }
   }  
+
+  private static void verifyUsername(String uname, Connect con) throws InvalidUsernameException, SQLException{
+
+
+    String queryResult = "SELECT * FROM CUSTOMER c WHERE c.username = '" + uname + "'";
+        
+    Statement stmt = con.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String pulledID = "";
+
+    while (rs.next())
+    {
+      pulledID = (rs.getString("username"));
+    }
+
+    if (pulledID.trim().equals(uname)) throw new InvalidUsernameException("Username already taken");
+  }
+
 }
