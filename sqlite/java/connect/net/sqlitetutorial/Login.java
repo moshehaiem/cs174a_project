@@ -82,6 +82,7 @@ public class Login {
     String taxId = "";
     String ssn = "";
     String isManager = "";
+    String unique_id = "";
     if (login_create.trim().equals("N")) {
 
       System.out.println("What is your name?");
@@ -171,6 +172,8 @@ public class Login {
         System.exit(1);
       }
 
+      
+
       String insertData = "INSERT INTO CUSTOMER(_name, username, _password, _address, _state, phone_number, email_address, tax_id, SSN, isManager)" + 
 							 " VALUES('" + name + "','" + username + "','" + password + "','" + address + "','" + state + "','" + phone + "','" + email + "','" + taxId + "','" + ssn + "','" + isManager + "')";
       
@@ -182,6 +185,41 @@ public class Login {
 			} catch (Exception e) {
 				System.out.println(e);
 			}
+      
+
+
+
+      String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id = (SELECT max(unique_id) FROM ACCOUNT)";
+        
+      Statement stmt = con.getConnection().createStatement();
+        
+      ResultSet rs = stmt.executeQuery(queryResult);
+        
+      String newID = "";
+
+      while (rs.next()){
+      newID = (rs.getString("unique_id"));
+      }
+      int i=Integer.parseInt(newID);
+      i += 1;
+      newID = String.valueOf(i);
+      
+
+
+      insertData = "INSERT INTO ACCOUNT(unique_id, balance, tax_id)" + 
+							 " VALUES('" + newID + "','1000','" + taxId + "')";
+      
+      st = con.getConnection().createStatement();
+            
+			try {
+				rs = st.executeQuery(insertData);
+        System.out.println("Market account succesfully created. 1000$ automatically deposited.");
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+
+
+
     }
   }  
 

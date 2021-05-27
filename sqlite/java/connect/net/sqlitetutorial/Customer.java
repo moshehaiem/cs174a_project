@@ -7,7 +7,7 @@ public class Customer {
   private Connect custConn;
 
   public void buyStock(){
-
+    
   }
 
   public void sellStock(){
