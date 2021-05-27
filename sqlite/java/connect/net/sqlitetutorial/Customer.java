@@ -7,7 +7,47 @@ public class Customer {
   private Connect custConn;
 
   public void buyStock(){
-    
+    String stock_type="";
+    System.out.println("What stock would you like to buy (SKB, SMD, STC)");
+      
+    try {
+      stock_type = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for stock");
+      System.exit(1);
+    }
+
+    String amount="";
+    System.out.println("How many shares");
+      
+    try {
+      amount = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for amount");
+      System.exit(1);
+    }
+
+
+    String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
+        
+    Statement stmt = con.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String priceforstock = "";
+
+    while (rs.next()){
+      priceforstock = (rs.getString("curr_price"));
+    }
+
+    int p=Integer.parseInt(priceforstock);
+
+    int i=Integer.parseInt(amount);
+    i *= p;
+    amount = String.valueOf(i);
+
+
+
   }
 
   public void sellStock(){
