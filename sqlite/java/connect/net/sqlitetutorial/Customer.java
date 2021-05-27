@@ -48,6 +48,27 @@ public class Customer {
     amount = String.valueOf(i);
 
 
+		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + amount + " WHERE a.unique_id = '" + customerID + "'";
+		rs = st.executeQuery(updateRow);
+
+
+    // queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
+        
+    // Statement stmt = myC.getConnection().createStatement();
+        
+    // ResultSet rs = stmt.executeQuery(queryResult);
+        
+    // String priceforstock = "";
+
+    // while (rs.next()){
+    //   priceforstock = (rs.getString("curr_price"));
+    // }
+
+
+
+    // updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + amount + " WHERE a.unique_id = '" + customerID + "'";
+		// rs = st.executeQuery(updateRow);
+
 
   }
 
@@ -83,9 +104,10 @@ public class Customer {
     
     
     
-  public Customer(String username, Connect conn){
+  public Customer(String username, Connect conn, String uniqueID){
     myC = conn;
     System.out.println("Logged in");
+    customerID = uniqueID;
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String command = null;

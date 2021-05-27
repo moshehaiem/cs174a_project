@@ -33,7 +33,7 @@ public class Manager {
     
     
     
-  public Manager(String username, Connect conn){
+  public Manager(String username, Connect conn, String uniqueID){
     custConn = conn;
     
     System.out.println("Logged in");

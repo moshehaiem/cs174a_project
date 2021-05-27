@@ -56,12 +56,12 @@ public class Login {
         
         if (userType.equals("customer") == true){
           L = new ConfirmLogin("customer", userID, userPwd, con);
-          Customer C = new Customer(userID, con);
+          Customer C = new Customer(userID, con, getUniqueId(userID));
           loggedIn = true;
         }
         else if (userType.equals("manager") == true){	
           L = new ConfirmLogin("manager", userID, userPwd, con);
-          Manager M = new Manager(userID, con);
+          Manager M = new Manager(userID, con, getUniqueId(userID));
           loggedIn = true;
         }
         else{
@@ -240,6 +240,28 @@ public class Login {
     }
 
     if (pulledID.trim().equals(uname)) throw new InvalidUsernameException("Username already taken");
+  }
+
+
+
+  private static String getUniqueId(String uname, Connect con) throws InvalidUsernameException, SQLException{
+
+
+    String queryResult = "SELECT * FROM ACCOUNT a, CUSTOMER c WHERE c.tax_id = a.tax_id AND c.username = '" + uname + "'";
+        
+    Statement stmt = con.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String pulledUI = "";
+
+    while (rs.next())
+    {
+      pulledUI = (rs.getString("unique_id"));
+    }
+
+    if (pulledUD.trim().equals(uname)) throw new InvalidUsernameException("Username already taken");
+    else return pulledUI;
   }
 
 }
