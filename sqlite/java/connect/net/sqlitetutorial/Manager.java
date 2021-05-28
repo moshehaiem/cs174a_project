@@ -54,22 +54,58 @@ public class Manager {
       
       switch( command ){
         case "add monthly interest":
-        addInterest();
+        try {
+          addInterest();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in adding interest. Exiting");
+          System.exit(1);
+        }
         break;
         case "generate monthly statement":
-        generateMonthlyStatement();
+        try {
+          generateMonthlyStatement();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in generating monthly statement. Exiting");
+          System.exit(1);
+        }
         break;
         case "list active customers":
-        listActiveCustomers();
+        try {
+          listActiveCustomers();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in listing active customers. Exiting");
+          System.exit(1);
+        }
         break;
         case "generate DTER":
-        generateDTER();
+        try {
+          generateDTER();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in generating DTER. Exiting");
+          System.exit(1);
+        }
         break;
         case "get customer report":
-        getCusomterReport();
+        try {
+          getCusomterReport();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in getting customer report. Exiting");
+          System.exit(1);
+        }
         break;
         case "delete transactions":
-        deleteTransactions();
+        try {
+          deleteTransactions();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in deleting transactions. Exiting");
+          System.exit(1);
+        }
         break;
         case "quit":
         continueAccess = false;
