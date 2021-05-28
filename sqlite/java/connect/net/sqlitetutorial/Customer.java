@@ -152,10 +152,50 @@ public class Customer {
 
   public void showTransactions(){
 
+
+
   }
 
   public void listCurrentPrice(){
+    String name="";
+    String stock_type="";
+    String dob="";
+    String movie_title="";
+    String role="";
+    String year="";
+    String total_value="";
 
+    System.out.println("Which stock?");
+    try {
+      stock_type = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for withdrawal");
+      System.exit(1);
+    }
+
+
+    String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+
+    while (rs.next()){
+      name = (rs.getString("_name"));
+      dob = (rs.getString("dob"));
+      movie_title=(rs.getString("movie_title"));
+      role=(rs.getString("_role"));
+      year=(rs.getString("_year"));
+      total_value=(rs.getString("contract"));
+    }
+
+    System.out.println("Actor/director name: "+ name);
+    System.out.println("Stock symbol: "+ stock_type);
+    System.out.println("Actor/director dob: "+ dob);
+    System.out.println("Movie title: "+ movie_title);
+    System.out.println("Role: "+ role);
+    System.out.println("Year: "+ year);
+    System.out.println("Contract: $"+ total_value);
   }
 
   public void listMovieInformation(){
@@ -196,25 +236,67 @@ public class Customer {
         }
         break;
         case "sell stock":
-        sellStock();
+        try {
+          sellStock();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in selling stock. Exiting");
+          System.exit(1);
+        }
         break;
         case "deposit money":
-        depositMoney();
+        try {
+          depositMoney();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in Depositing Money. Exiting");
+          System.exit(1);
+        }
         break;
         case "withdraw money":
-        withdrawMoney();
+        try {
+          withdrawMoney();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in withdrawing Money. Exiting");
+          System.exit(1);
+        }
         break;
         case "show balance":
-        showBalance();
+        try {
+          showBalance();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in showing balance. Exiting");
+          System.exit(1);
+        }
         break;
         case "show transactions":
-        showTransactions();
+        try {
+          showTransactions();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in showing transactions. Exiting");
+          System.exit(1);
+        }
         break;
         case "show price":
-        listCurrentPrice();
+        try {
+          listCurrentPrice();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in listing current price. Exiting");
+          System.exit(1);
+        }
         break;
         case "movie information":
-        listMovieInformation();
+        try {
+          listMovieInformation();
+        } catch (SQLException e) {
+          System.out.println(e);
+          System.out.println("Error in listing movie information. Exiting");
+          System.exit(1);
+        }
         break;
         case "quit":
         continueAccess = false;
