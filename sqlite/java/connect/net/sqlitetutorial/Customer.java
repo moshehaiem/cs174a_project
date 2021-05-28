@@ -78,13 +78,75 @@ public class Customer {
 
   public void depositMoney(){
 
+    String moneyAmount="";
+    System.out.println("How much money to deposit?");
+      
+    try {
+      moneyAmount = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for depositing");
+      System.exit(1);
+    }
+
+    String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance + " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
+		stmt.executeQuery(updateRow);
+
   }
 
   public void withdrawMoney(){
+    String moneyAmount="";
+    System.out.println("How much money to withdraw?");
+      
+    try {
+      moneyAmount = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for withdrawal");
+      System.exit(1);
+    }
+
+    String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String currBalance = "";
+
+    while (rs.next()){
+      currBalance = (rs.getString("balance"));
+    }
+
+    int p=Integer.parseInt(currBalance);
+    int i=Integer.parseInt(moneyAmount);
+
+
+    if(i<p){
+      System.out.println("You don't have enough in your balance");
+      System.exit(1);
+    }
+    moneyAmount = String.valueOf(i);
+
+    String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
+		stmt.executeUpdate(updateRow);
 
   }
 
+
+
   public void showBalance(){
+    String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String currBalance = "";
+
+    while (rs.next()){
+      currBalance = (rs.getString("balance"));
+    }
+    System.out.println("Current Balance:");
+    System.out.println("$" + currBalance);
 
   }
 
