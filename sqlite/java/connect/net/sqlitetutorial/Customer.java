@@ -339,7 +339,7 @@ public class Customer {
     try {
       stock_type = br.readLine();
     } catch (IOException ioe) {
-      System.out.println("Not an option for withdrawal");
+      System.out.println("Not an option for stock");
       System.exit(1);
     }
 
@@ -409,12 +409,12 @@ public class Customer {
 
     
     
-  public Customer(String username, Connect conn, String uniqueID, String c_date, String usnm){
+  public Customer(String _username, Connect conn, String uniqueID, String c_date){
     myC = conn;
     System.out.println("Logged in");
     customerID = uniqueID;
     curr_date = c_date;
-    username = usnm;
+    username = _username;
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String command = null;

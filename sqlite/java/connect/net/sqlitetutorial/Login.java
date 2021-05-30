@@ -17,7 +17,7 @@ public class Login {
     
     ConfirmLogin L;
 
-    System.out.println("Set today's date (format: YYYY-MM-DD");
+    System.out.println("Set today's date (format: YYYY-MM-DD)");
     try {
       date_entered = br.readLine(); 
     } catch (IOException ioe) {
@@ -124,7 +124,7 @@ public class Login {
         if (userType.equals("customer") == true){
           L = new ConfirmLogin("customer", userID, userPwd, con);
           try {
-            Customer C = new Customer(userID, con, getUniqueId(userID, con), getDate(con), userID);
+            Customer C = new Customer(userID, con, getUniqueId(userID, con), getDate(con));
           } catch (SQLException e) {
             System.out.println("Unique Id unable to be found");
             System.exit(1);

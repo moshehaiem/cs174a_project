@@ -8,6 +8,13 @@ public class Manager {
 
 
   public void generateMonthlyStatement() throws SQLException{
+    //get current month
+    //find transactions with the same month as current month
+    //in those transactions, list name and email of customer
+    //find the latest date of the month and earliest date of month, and in those dates, find the balance associated
+    //total commision payed = amount of transactions that are buy and sell * 20 
+
+    
 
   }
 
