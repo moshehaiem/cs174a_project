@@ -73,10 +73,13 @@ public class Customer {
 		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - 20 - " + amount + " WHERE a.unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
+    p2 -= i;
+    String ov_balance = String.valueOf(p2);
+
 
     String updatedAmount = "-20-" + amount; 
     //add to transaction table
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + quantity + "'," +updatedAmount +")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + quantity + "'," +updatedAmount +", "+ ov_balance +")";
 		stmt.executeUpdate(insertData);
 
 
@@ -173,6 +176,7 @@ public class Customer {
     amount = String.valueOf(i);
 
 
+
     queryResult = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id= '" + customerID + "'";
     rs = stmt.executeQuery(queryResult);
         
@@ -201,8 +205,20 @@ public class Customer {
 		stmt.executeUpdate(updateRow);
 
 
+
+    queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+    rs = stmt.executeQuery(queryResult);
+        
+    String ovbalance = "";
+
+    while (rs.next()){
+      ovbalance = (rs.getString("balance"));
+    }
+
+
+
     //insert to transaction
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + newquantity + "'," +updatedAmount +")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + newquantity + "'," +updatedAmount +", " + ovbalance+")";
 		stmt.executeUpdate(insertData);
       
 
@@ -225,8 +241,20 @@ public class Customer {
     Statement stmt = myC.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
 
+
+    
+    String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String ovbalance = "";
+
+    while (rs.next()){
+      ovbalance = (rs.getString("balance"));
+    }
+
+
     //add to transaction
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' deposit ',0," + moneyAmount+ ")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' deposit ',0," + moneyAmount+ ", " + ovbalance +")";
       
 		
 		stmt.executeUpdate(insertData);
@@ -271,9 +299,19 @@ public class Customer {
 		stmt.executeUpdate(updateRow);
 
 
+
+
+    queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+    rs = stmt.executeQuery(queryResult);
+        
+    String ovbalance = "";
+
+    while (rs.next()){
+      ovbalance = (rs.getString("balance"));
+    }
     //add to transaction
 
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + moneyAmount+ ")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + moneyAmount+ ", "+ ovbalance+")";
       
 		
 		stmt.executeUpdate(insertData);

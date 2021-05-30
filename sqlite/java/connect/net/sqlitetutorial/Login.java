@@ -24,10 +24,8 @@ public class Login {
       System.out.println("Not an available date");
       System.exit(1);
     }
-
-
     
-    String updateRow = "UPDATE CURRENT_DATE d set d._date = '" + date_entered + "'";
+    String updateRow = "UPDATE CURRENT_DATE SET _date = '" + date_entered + "'";
 
     Statement stmt = con.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
@@ -42,7 +40,7 @@ public class Login {
       System.exit(1);
     }
     
-    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + SKB + "'";
+    updateRow = "UPDATE MOVIE_CONTRACT SET curr_price = '" + SKB + "' WHERE symbol = 'SKB'";
 
     stmt = con.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
@@ -57,7 +55,7 @@ public class Login {
       System.exit(1);
     }
     
-    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + SMD + "'";
+    updateRow = "UPDATE MOVIE_CONTRACT SET curr_price = '" + SMD + "' WHERE symbol = 'SMD'";
 
     stmt = con.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
@@ -71,7 +69,7 @@ public class Login {
       System.exit(1);
     }
     
-    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + STC + "'";
+    updateRow = "UPDATE MOVIE_CONTRACT SET curr_price = '" + STC + "' WHERE symbol = 'STC'";
 
     stmt = con.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
@@ -262,10 +260,8 @@ public class Login {
 
 
       String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id = (SELECT max(unique_id) FROM ACCOUNT)";
-        
-      Statement stmt = con.getConnection().createStatement();
-        
-      ResultSet rs = stmt.executeQuery(queryResult);
+                
+      ResultSet rs = st.executeQuery(queryResult);
         
       String newID = "";
 
