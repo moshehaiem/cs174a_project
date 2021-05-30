@@ -17,7 +17,7 @@ public class Login {
     
     ConfirmLogin L;
 
-    System.out.println("Set today's date (format: MM/DD/YYYY");
+    System.out.println("Set today's date (format: YYYY-MM-DD");
     try {
       date_entered = br.readLine(); 
     } catch (IOException ioe) {

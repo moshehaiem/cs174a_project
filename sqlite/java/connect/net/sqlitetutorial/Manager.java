@@ -6,27 +6,28 @@ public class Manager {
   private int managerID;
   private Connect custConn;
 
-  public void addInterest(){
+
+  public void generateMonthlyStatement() throws SQLException{
 
   }
 
-  public void generateMonthlyStatement(){
-
-  }
-
-  public void listActiveCustomers(){
+  public void listActiveCustomers() throws SQLException{
     
   }
 
-  public void generateDTER(){
+  public void generateDTER() throws SQLException{
 
   }
 
-  public void getCusomterReport(){
+  public void getCusomterReport() throws SQLException{
 
   }
 
-  public void deleteTransactions(){
+  public void deleteTransactions() throws SQLException{
+
+  }
+
+  public void addInterest() throws SQLException{
 
   }
     
@@ -53,7 +54,7 @@ public class Manager {
       }
       
       switch( command ){
-        case "add monthly interest":
+        case "interest":
         try {
           addInterest();
         } catch (SQLException e) {
@@ -62,7 +63,7 @@ public class Manager {
           System.exit(1);
         }
         break;
-        case "generate monthly statement":
+        case "statement":
         try {
           generateMonthlyStatement();
         } catch (SQLException e) {
@@ -71,7 +72,7 @@ public class Manager {
           System.exit(1);
         }
         break;
-        case "list active customers":
+        case "customers":
         try {
           listActiveCustomers();
         } catch (SQLException e) {
@@ -80,7 +81,7 @@ public class Manager {
           System.exit(1);
         }
         break;
-        case "generate DTER":
+        case "DTER":
         try {
           generateDTER();
         } catch (SQLException e) {
@@ -89,7 +90,7 @@ public class Manager {
           System.exit(1);
         }
         break;
-        case "get customer report":
+        case "report":
         try {
           getCusomterReport();
         } catch (SQLException e) {
@@ -98,7 +99,7 @@ public class Manager {
           System.exit(1);
         }
         break;
-        case "delete transactions":
+        case "delete":
         try {
           deleteTransactions();
         } catch (SQLException e) {

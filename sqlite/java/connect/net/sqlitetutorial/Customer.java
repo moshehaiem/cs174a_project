@@ -369,11 +369,44 @@ public class Customer {
   }
 
   public void listMovieInformation() throws SQLException{
+    String year1 = "";
+    String year2 = "";
+    System.out.println("year range 1: ");
+    try {
+      year1 = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for year");
+      System.exit(1);
+    }
+    System.out.println("year range 2: ");
+    try {
+      year2 = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for year");
+      System.exit(1);
+    }
 
+    //strftime('%y', m.date)    
+    //find all movies in between the two years
+
+    String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE _year<= '" + year2 + "' AND _year >= '" +year1 +"'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+
+
+    //display movie info in those years
+    while (rs.next()){
+      System.out.println("Movie Title: "+ (rs.getString("movie_title")));
+      System.out.println("Year: "+ (rs.getString("_year")));
+      System.out.println("Genre: "+ (rs.getString("genre")));
+      System.out.println("Ratings: "+ (rs.getString("ratings")));
+      System.out.println("_______________________________________________");
+      System.out.println();
+    }
   }
 
-    
-    
     
     
   public Customer(String username, Connect conn, String uniqueID, String c_date, String usnm){
@@ -398,7 +431,7 @@ public class Customer {
       }
       
       switch( command ){
-        case "buy stock":
+        case "buy":
         try {
           buyStock();
         } catch (SQLException e) {
@@ -407,7 +440,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "sell stock":
+        case "sell":
         try {
           sellStock();
         } catch (SQLException e) {
@@ -416,7 +449,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "deposit money":
+        case "deposit":
         try {
           depositMoney();
         } catch (SQLException e) {
@@ -425,7 +458,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "withdraw money":
+        case "withdraw":
         try {
           withdrawMoney();
         } catch (SQLException e) {
@@ -434,7 +467,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "show balance":
+        case "balance":
         try {
           showBalance();
         } catch (SQLException e) {
@@ -443,7 +476,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "show transactions":
+        case "transactions":
         try {
           showTransactions();
         } catch (SQLException e) {
@@ -452,7 +485,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "show price":
+        case "price":
         try {
           listCurrentPrice();
         } catch (SQLException e) {
@@ -461,7 +494,7 @@ public class Customer {
           System.exit(1);
         }
         break;
-        case "movie information":
+        case "movies":
         try {
           listMovieInformation();
         } catch (SQLException e) {
