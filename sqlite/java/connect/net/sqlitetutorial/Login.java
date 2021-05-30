@@ -10,8 +10,75 @@ public class Login {
     String userType = "";
     String userID = "";
     String userPwd = "";
+    String date_entered = "";
+    String SKB = "";
+    String SMD = "";
+    String STC = "";
     
     ConfirmLogin L;
+
+    System.out.println("Set today's date (format: MM/DD/YYYY");
+    try {
+      date_entered = br.readLine(); 
+    } catch (IOException ioe) {
+      System.out.println("Not an available date");
+      System.exit(1);
+    }
+
+
+    
+    String updateRow = "UPDATE CURRENT_DATE d set d._date = '" + date_entered + "'";
+
+    Statement stmt = con.getConnection().createStatement();
+    stmt.executeUpdate(updateRow);
+
+
+
+    System.out.println("Set SKB price: ");
+    try {
+      SKB = br.readLine(); 
+    } catch (IOException ioe) {
+      System.out.println("Not an available price");
+      System.exit(1);
+    }
+    
+    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + SKB + "'";
+
+    stmt = con.getConnection().createStatement();
+    stmt.executeUpdate(updateRow);
+
+
+
+    System.out.println("Set SMD price: ");
+    try {
+      SMD = br.readLine(); 
+    } catch (IOException ioe) {
+      System.out.println("Not an available price");
+      System.exit(1);
+    }
+    
+    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + SMD + "'";
+
+    stmt = con.getConnection().createStatement();
+    stmt.executeUpdate(updateRow);
+
+
+    System.out.println("Set STC price: ");
+    try {
+      STC = br.readLine(); 
+    } catch (IOException ioe) {
+      System.out.println("Not an available price");
+      System.exit(1);
+    }
+    
+    updateRow = "UPDATE MOVIE_CONTRACT m set m.curr_price = '" + STC + "'";
+
+    stmt = con.getConnection().createStatement();
+    stmt.executeUpdate(updateRow);
+
+
+
+
     
     System.out.println("Are you logging in or creating an account? (Y = login, N = create account)");
     try {
@@ -57,7 +124,7 @@ public class Login {
         if (userType.equals("customer") == true){
           L = new ConfirmLogin("customer", userID, userPwd, con);
           try {
-            Customer C = new Customer(userID, con, getUniqueId(userID, con));
+            Customer C = new Customer(userID, con, getUniqueId(userID, con), getDate(con), userID);
           } catch (SQLException e) {
             System.out.println("Unique Id unable to be found");
             System.exit(1);
@@ -268,6 +335,28 @@ public class Login {
     System.out.println(pulledUI);
 
     return pulledUI;
+  }
+
+
+
+  private static String getDate(Connect con) throws SQLException{
+
+
+    String queryResult = "SELECT * FROM CURRENT_DATE";
+        
+    Statement stmt = con.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String pulledDate = "";
+
+    while (rs.next())
+    {
+      pulledDate = (rs.getString("_date"));
+    }
+
+
+    return pulledDate;
   }
 
 }

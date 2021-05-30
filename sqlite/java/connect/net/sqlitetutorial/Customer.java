@@ -4,7 +4,9 @@ import java.sql.*;
 
 public class Customer {
   private String customerID;
+  private String curr_date;
   private Connect myC;
+  private String username;
   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
   public void buyStock() throws SQLException{
@@ -44,40 +46,170 @@ public class Customer {
     int p=Integer.parseInt(priceforstock);
 
     int i=Integer.parseInt(amount);
+    int quantity = i;
+    i *= p;
+    amount = String.valueOf(i);
+
+    //confirm balance is high enough
+    queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
+        
+    rs = stmt.executeQuery(queryResult);
+        
+    String currBalance = "";
+
+    while (rs.next()){
+      currBalance = (rs.getString("balance"));
+    }
+
+    int p2=Integer.parseInt(currBalance) - 20;
+
+
+    if(i>p2){
+      System.out.println("You don't have enough in your balance");
+      System.exit(1);
+    }
+
+
+		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - 20 - " + amount + " WHERE a.unique_id = '" + customerID + "'";
+		stmt.executeUpdate(updateRow);
+
+
+    String updatedAmount = "-20-" + amount; 
+    //add to transaction table
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + quantity + "'," +updatedAmount +")";
+		stmt.executeUpdate(insertData);
+
+
+
+    //add stock to account
+
+    //check if user_id is under stock info
+    //if it isn't, insert the new data
+
+    //if it is, then check if the bought stock id exists under that tax_id
+    //if it does, then update the amount of stock 
+    //if it doesn't, then insert the new data
+
+    queryResult = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id= '" + customerID + "'";
+        
+    rs = stmt.executeQuery(queryResult);
+        
+    String user = "";
+
+    while (rs.next()){
+      user = (rs.getString("unique_id"));
+    }
+
+
+    if(user.trim().equals("")){
+      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symol)" + " VALUES('" + username + "','"+customerID +"'," + quantity + ",'" +stock_type +"')";
+		  stmt.executeUpdate(insertData);
+      System.exit(1);
+    }
+
+
+    queryResult = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id= '" + customerID + "' AND s.symbol = '"+ stock_type +"'";
+        
+    rs = stmt.executeQuery(queryResult);
+        
+    String sym_exists = "";
+
+    while (rs.next()){
+      sym_exists = (rs.getString("unique_id"));
+    }
+
+    if(sym_exists.trim().equals("")){
+      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symol)" + " VALUES('" + username + "','"+customerID +"'," + quantity + ",'" +stock_type +"')";
+		  stmt.executeUpdate(insertData);
+      System.exit(1);
+    }
+
+
+    updateRow = "UPDATE STOCK_ACCOUNT s set s.shares = s.shares + " + quantity + " WHERE s.unique_id = '" + customerID + "'";
+		stmt.executeUpdate(updateRow);
+  }
+
+
+  public void sellStock() throws SQLException{
+    //add to transaction
+    String stock_type="";
+    System.out.println("What stock would you like to sell (SKB, SMD, STC)");
+      
+    try {
+      stock_type = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for stock");
+      System.exit(1);
+    }
+
+    String amount="";
+    System.out.println("How many shares");
+      
+    try {
+      amount = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for amount");
+      System.exit(1);
+    }
+
+
+    String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
+    String priceforstock = "";
+
+    while (rs.next()){
+      priceforstock = (rs.getString("curr_price"));
+    }
+
+    int p=Integer.parseInt(priceforstock);
+
+    int i=Integer.parseInt(amount);
+    int quantity = i;
     i *= p;
     amount = String.valueOf(i);
 
 
-		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + amount + " WHERE a.unique_id = '" + customerID + "'";
+    queryResult = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id= '" + customerID + "'";
+    rs = stmt.executeQuery(queryResult);
+        
+    String availableshare = "";
+
+    while (rs.next()){
+      availableshare = (rs.getString("shares"));
+    }
+
+    int i2=Integer.parseInt(availableshare);
+
+    if(i2 < quantity){
+      System.out.println("You don't have enough shares");
+      System.exit(1);
+    }
+
+    String newquantity = String.valueOf(quantity);
+    String updatedAmount = "-20+" + amount;
+
+    //update amount of shares (minus availableshare)
+    String updateRow = "UPDATE STOCK_ACCOUNT s set s.shares = s.shares - " + newquantity + " WHERE s.unique_id = '" + customerID + "'";
+		stmt.executeUpdate(updateRow);
+
+    //update, add money to balance (plus amount)
+    updateRow = "UPDATE ACCOUNT a set a.balance = a.balance + " + updatedAmount + " WHERE a.unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
 
-    // queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE m.symbol= '" + stock_type + "'";
-        
-    // Statement stmt = myC.getConnection().createStatement();
-        
-    // ResultSet rs = stmt.executeQuery(queryResult);
-        
-    // String priceforstock = "";
-
-    // while (rs.next()){
-    //   priceforstock = (rs.getString("curr_price"));
-    // }
-
-
-
-    // updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + amount + " WHERE a.unique_id = '" + customerID + "'";
-		// rs = st.executeQuery(updateRow);
-
+    //insert to transaction
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + newquantity + "'," +updatedAmount +")";
+		stmt.executeUpdate(insertData);
+      
 
   }
 
-  public void sellStock(){
-    
-  }
 
-  public void depositMoney(){
-
+  public void depositMoney() throws SQLException{
     String moneyAmount="";
     System.out.println("How much money to deposit?");
       
@@ -87,13 +219,22 @@ public class Customer {
       System.out.println("Not an option for depositing");
       System.exit(1);
     }
-
+    
     String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance + " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
-		stmt.executeQuery(updateRow);
 
+    Statement stmt = myC.getConnection().createStatement();
+    stmt.executeUpdate(updateRow);
+
+    //add to transaction
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' deposit ',0," + moneyAmount+ ")";
+      
+		
+		stmt.executeUpdate(insertData);
   }
 
-  public void withdrawMoney(){
+
+
+  public void withdrawMoney() throws SQLException{
     String moneyAmount="";
     System.out.println("How much money to withdraw?");
       
@@ -120,7 +261,7 @@ public class Customer {
     int i=Integer.parseInt(moneyAmount);
 
 
-    if(i<p){
+    if(i>p){
       System.out.println("You don't have enough in your balance");
       System.exit(1);
     }
@@ -129,11 +270,20 @@ public class Customer {
     String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
+
+    //add to transaction
+
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + moneyAmount+ ")";
+      
+		
+		stmt.executeUpdate(insertData);
+
+
   }
 
 
 
-  public void showBalance(){
+  public void showBalance() throws SQLException{
     String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
         
     Statement stmt = myC.getConnection().createStatement();
@@ -150,13 +300,33 @@ public class Customer {
 
   }
 
-  public void showTransactions(){
+  public void showTransactions() throws SQLException{
+    String queryResult = "SELECT * FROM TRANSACTIONS t WHERE t.username= '" + username + "'";
+        
+    Statement stmt = myC.getConnection().createStatement();
+        
+    ResultSet rs = stmt.executeQuery(queryResult);
+        
 
+    while (rs.next()){
+      System.out.println("Date of transaction: ");
+      System.out.println((rs.getString("_date")));
 
+      System.out.println("Transaction type: ");
+      System.out.println((rs.getString("trans_type")));
 
+      System.out.println("overall shares bought and sold: ");
+      System.out.println((rs.getString("shares")));
+
+      System.out.println("overall balance");
+      System.out.println((rs.getString("balance")));
+
+      System.out.println("________________________________");
+      System.out.println();
+    }
   }
 
-  public void listCurrentPrice(){
+  public void listCurrentPrice() throws SQLException{
     String name="";
     String stock_type="";
     String dob="";
@@ -198,7 +368,7 @@ public class Customer {
     System.out.println("Contract: $"+ total_value);
   }
 
-  public void listMovieInformation(){
+  public void listMovieInformation() throws SQLException{
 
   }
 
@@ -206,10 +376,12 @@ public class Customer {
     
     
     
-  public Customer(String username, Connect conn, String uniqueID){
+  public Customer(String username, Connect conn, String uniqueID, String c_date, String usnm){
     myC = conn;
     System.out.println("Logged in");
     customerID = uniqueID;
+    curr_date = c_date;
+    username = usnm;
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String command = null;
