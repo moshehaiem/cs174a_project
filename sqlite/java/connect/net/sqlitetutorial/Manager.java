@@ -3,9 +3,11 @@ import java.io.*;
 import java.sql.*;
 
 public class Manager {
-  private int managerID;
-  private Connect custConn;
-
+  private String managerID;
+  private String curr_date;
+  private Connect myC;
+  private String username;
+  BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
   public void generateMonthlyStatement() throws SQLException{
     //get current month
@@ -14,25 +16,111 @@ public class Manager {
     //find the latest date of the month and earliest date of month, and in those dates, find the balance associated
     //total commision payed = amount of transactions that are buy and sell * 20 
 
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+
+    String queryResult2 = "SELECT MIN(EXTRACT(MONTH FROM t.date)) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+
+    String queryResult3 = "SELECT MAX(EXTRACT(MONTH FROM t.date)) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
     
+    Statement stmt = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(queryResult);
+    ResultSet rs2 = stmt.executeQuery(queryResult2);
+    ResultSet rs3 = stmt.executeQuery(queryResult3);
+        
+    while (rs.next()){
+      System.out.println("Name: "+ rs.getString("_name"));
+      System.out.println("Email: "+ rs.getString("email_address"));
+    }
 
   }
+
+
 
   public void listActiveCustomers() throws SQLException{
-    
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND SUM(t.shares) >= 1000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+
+    Statement stmt = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(queryResult);
+
+    int count = 1;
+    while (rs.next()){
+      System.out.println(count + ") "+ rs.getString("_name"));
+      count++;
+    }
   }
+
+
 
   public void generateDTER() throws SQLException{
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND SUM(t.balance) >= 10000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
 
+    Statement stmt = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(queryResult);
+
+
+    while (rs.next()){
+      System.out.println("Name: "+ rs.getString("_name"));
+      System.out.println("State: "+ rs.getString("_state"));
+    }
   }
+
+
 
   public void getCusomterReport() throws SQLException{
+    String cust_id="";
+    System.out.println("customer id:");
+      
+    try {
+      cust_id = br.readLine();
+    } catch (IOException ioe) {
+      System.out.println("Not an option for id");
+      System.exit(1);
+    }
+
+    String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id = '"+cust_id+"'";
+    String queryResult2 = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id = '"+cust_id+"'";
+
+    Statement stmt = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(queryResult);
+    ResultSet rs2 = stmt.executeQuery(queryResult2);
+
+
+    while (rs.next()){
+      String market_active = rs.getString("unique_id");
+      System.out.println("current balance: $" + rs.getString("balance"));
+
+      if(market_active.trim().equals("")){
+        System.out.println("User does not have active market account");
+      }else{
+        System.out.println("User has active market account");
+      }
+
+    }
+
+    while (rs.next()){
+      String stock_active = rs2.getString("unique_id");
+      if(stock_active.trim().equals("")){
+        System.out.println("User does not have active stock account");
+      }else{  
+        System.out.println("User has active stock account");
+      }
+
+    }
+
+
 
   }
+
+
 
   public void deleteTransactions() throws SQLException{
+    String queryResult = "DELETE FROM TRANSACTIONS";
+
+    Statement stmt = myC.getConnection().createStatement();
+    stmt.executeQuery(queryResult);
 
   }
+
 
   public void addInterest() throws SQLException{
 
@@ -40,11 +128,12 @@ public class Manager {
     
     
     
-    
-  public Manager(String username, Connect conn, String uniqueID){
-    custConn = conn;
-    
+  public Manager(String _username, Connect conn, String uniqueID, String c_date){
+    myC = conn;
     System.out.println("Logged in");
+    managerID = uniqueID;
+    curr_date = c_date;
+    username = _username;
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String command = null;

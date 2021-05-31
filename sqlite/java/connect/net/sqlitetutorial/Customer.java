@@ -7,6 +7,7 @@ public class Customer {
   private String curr_date;
   private Connect myC;
   private String username;
+  
   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
   public void buyStock() throws SQLException{
