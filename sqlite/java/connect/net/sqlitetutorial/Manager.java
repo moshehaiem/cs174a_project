@@ -10,7 +10,6 @@ public class Manager {
   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
   public void generateMonthlyStatement() throws SQLException{
-    //get current month
     //find transactions with the same month as current month
     //in those transactions, list name and email of customer
     //find the latest date of the month and earliest date of month, and in those dates, find the balance associated
@@ -18,18 +17,41 @@ public class Manager {
 
     String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
 
-    String queryResult2 = "SELECT MIN(EXTRACT(MONTH FROM t.date)) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+    String queryResult2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+") AND EXTRACT(DAY FROM t.date) = (SELECT * FROM TRANSACTIONS t WHERE t.date)";
 
-    String queryResult3 = "SELECT MAX(EXTRACT(MONTH FROM t.date)) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+    String queryResult3 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+") AND EXTRACT(DAY FROM t.date) = (SELECT * FROM TRANSACTIONS t WHERE t.date)";
+
+    String queryResult4 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+") AND (t.trans_type = " + "'" + "buy" + "'" + "OR t.trans_type = "+ "'" + "sell"+ "'" + ")";
     
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
     ResultSet rs2 = stmt.executeQuery(queryResult2);
     ResultSet rs3 = stmt.executeQuery(queryResult3);
+    ResultSet rs4 = stmt.executeQuery(queryResult4);
         
     while (rs.next()){
       System.out.println("Name: "+ rs.getString("_name"));
       System.out.println("Email: "+ rs.getString("email_address"));
+
+      String initb = rs2.getString("overall_balance");
+      String finalb = rs3.getString("overall_balance");
+
+      System.out.println("Initial balance: $"+ initb);
+      System.out.println("Final balance: $"+ finalb);
+
+      double initB = Double.parseDouble(initb);
+      double finalB = Double.parseDouble(finalb);
+      finalB -= initB;
+
+      System.out.println("Total earnings: $"+ String.valueOf(finalB));
+
+
+      int count = 0;
+      while(rs4.next()){
+        count++;
+      }
+      System.out.println("Commision payed: $"+ String.valueOf(count*20));
+      
     }
 
   }
@@ -97,7 +119,7 @@ public class Manager {
 
     }
 
-    while (rs.next()){
+    while (rs2.next()){
       String stock_active = rs2.getString("unique_id");
       if(stock_active.trim().equals("")){
         System.out.println("User does not have active stock account");
