@@ -131,7 +131,12 @@ public class Login {
         }
         else if (userType.equals("manager") == true){	
           L = new ConfirmLogin("manager", userID, userPwd, con);
-          // Manager M = new Manager(userID, con);
+          try {
+            Manager M = new Manager(userID, con, getUniqueId(userID, con), getDate(con));
+          } catch (SQLException e) {
+            System.out.println("Unique Id unable to be found");
+            System.exit(1);
+          }
           loggedIn = true;
         }
         else{

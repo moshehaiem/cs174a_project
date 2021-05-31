@@ -59,7 +59,7 @@ public class Manager {
 
 
   public void listActiveCustomers() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND SUM(t.shares) >= 1000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND SUM(t.shares) >= 1000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+") AND EXTRACT(YEAR FROM t.date) = EXTRACT(YEAR FROM "+curr_date+")";
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
@@ -74,7 +74,7 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND SUM(t.balance) >= 10000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+")";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND SUM(t.balance) >= 10000 AND EXTRACT(MONTH FROM t.date) = EXTRACT(MONTH FROM "+curr_date+") AND EXTRACT(YEAR FROM t.date) = EXTRACT(YEAR FROM "+curr_date+")";
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
