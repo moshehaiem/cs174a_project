@@ -256,6 +256,8 @@ public class Customer {
       
 		
 		stmt.executeUpdate(insertData);
+
+    System.out.println("Deposit transaction complete");
   }
 
 
@@ -353,8 +355,11 @@ public class Customer {
       System.out.println("overall shares bought and sold: ");
       System.out.println((rs.getString("shares")));
 
-      System.out.println("overall balance");
+      System.out.print("money transacted \n$");
       System.out.println((rs.getString("balance")));
+
+      System.out.print("overall balance \n$");
+      System.out.println((rs.getString("overall_balance")));
 
       System.out.println("________________________________");
       System.out.println();
@@ -369,6 +374,7 @@ public class Customer {
     String role="";
     String year="";
     String total_value="";
+    String price="";
 
     System.out.println("Which stock?");
     try {
@@ -392,8 +398,10 @@ public class Customer {
       role=(rs.getString("_role"));
       year=(rs.getString("_year"));
       total_value=(rs.getString("contract"));
+      price=(rs.getString("curr_price"));
     }
 
+    System.out.println("\nCurrent Price: $"+ price);
     System.out.println("Actor/director name: "+ name);
     System.out.println("Stock symbol: "+ stock_type);
     System.out.println("Actor/director dob: "+ dob);
@@ -401,6 +409,7 @@ public class Customer {
     System.out.println("Role: "+ role);
     System.out.println("Year: "+ year);
     System.out.println("Contract: $"+ total_value);
+    System.out.println("");
   }
 
   public void listMovieInformation() throws SQLException{
@@ -430,7 +439,7 @@ public class Customer {
         
     ResultSet rs = stmt.executeQuery(queryResult);
 
-
+    System.out.println();
     //display movie info in those years
     while (rs.next()){
       System.out.println("Movie Title: "+ (rs.getString("movie_title")));
