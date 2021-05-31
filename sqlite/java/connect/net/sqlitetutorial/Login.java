@@ -328,7 +328,6 @@ public class Login {
       pulledUI = (rs.getString("unique_id"));
     }
 
-    System.out.println(pulledUI);
 
     return pulledUI;
   }

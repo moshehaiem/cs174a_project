@@ -43,12 +43,11 @@ public class Customer {
       priceforstock = (rs.getString("curr_price"));
     }
 
-    int p=Integer.parseInt(priceforstock);
+    double price = Double.parseDouble(priceforstock);
 
-    int i=Integer.parseInt(amount);
-    int quantity = i;
-    i *= p;
-    amount = String.valueOf(i);
+    int shares =Integer.parseInt(amount);
+
+    double total = price * shares;
 
     //confirm balance is high enough
     queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id= '" + customerID + "'";
@@ -61,25 +60,24 @@ public class Customer {
       currBalance = (rs.getString("balance"));
     }
 
-    int p2=Integer.parseInt(currBalance) - 20;
+    double adujusted_balance = Double.parseDouble(currBalance) - 20;
 
 
-    if(i>p2){
+    if(total > adujusted_balance){
       System.out.println("You don't have enough in your balance");
       System.exit(1);
     }
 
 
-		String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - 20 - " + amount + " WHERE a.unique_id = '" + customerID + "'";
+		String updateRow = "UPDATE ACCOUNT SET balance = balance - 20 - " + total + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
-    p2 -= i;
-    String ov_balance = String.valueOf(p2);
+    adujusted_balance -= total;
 
+    double balance = -(total+20);
 
-    String updatedAmount = "-20-" + amount; 
     //add to transaction table
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + quantity + "'," +updatedAmount +", "+ ov_balance +")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + String.valueOf(shares) + "'," + String.valueOf(balance) + ", "+ String.valueOf(adujusted_balance) +")";
 		stmt.executeUpdate(insertData);
 
 
@@ -105,7 +103,7 @@ public class Customer {
 
 
     if(user.trim().equals("")){
-      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symol)" + " VALUES('" + username + "','"+customerID +"'," + quantity + ",'" +stock_type +"')";
+      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symbol)" + " VALUES('" + username + "','"+customerID +"'," + String.valueOf(shares) + ",'" +stock_type +"')";
 		  stmt.executeUpdate(insertData);
       System.exit(1);
     }
@@ -122,14 +120,16 @@ public class Customer {
     }
 
     if(sym_exists.trim().equals("")){
-      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symol)" + " VALUES('" + username + "','"+customerID +"'," + quantity + ",'" +stock_type +"')";
+      insertData = "INSERT INTO STOCK_ACCOUNT(username, unique_id, shares, symbol)" + " VALUES('" + username + "','"+customerID +"'," + String.valueOf(shares) + ",'" +stock_type +"')";
 		  stmt.executeUpdate(insertData);
       System.exit(1);
     }
 
 
-    updateRow = "UPDATE STOCK_ACCOUNT s set s.shares = s.shares + " + quantity + " WHERE s.unique_id = '" + customerID + "'";
+    updateRow = "UPDATE STOCK_ACCOUNT set shares = shares + " + String.valueOf(shares) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
+
+    System.out.println("Buy stock transaction complete");
   }
 
 
@@ -168,12 +168,11 @@ public class Customer {
       priceforstock = (rs.getString("curr_price"));
     }
 
-    int p=Integer.parseInt(priceforstock);
+    double price = Double.parseDouble(priceforstock);
 
-    int i=Integer.parseInt(amount);
-    int quantity = i;
-    i *= p;
-    amount = String.valueOf(i);
+    int shares =Integer.parseInt(amount);
+
+    double total = price * shares;
 
 
 
@@ -186,22 +185,19 @@ public class Customer {
       availableshare = (rs.getString("shares"));
     }
 
-    int i2=Integer.parseInt(availableshare);
+    double availableShares = Double.parseDouble(availableshare);
 
-    if(i2 < quantity){
+    if(availableShares < shares){
       System.out.println("You don't have enough shares");
       System.exit(1);
     }
 
-    String newquantity = String.valueOf(quantity);
-    String updatedAmount = "-20+" + amount;
-
     //update amount of shares (minus availableshare)
-    String updateRow = "UPDATE STOCK_ACCOUNT s set s.shares = s.shares - " + newquantity + " WHERE s.unique_id = '" + customerID + "'";
+    String updateRow = "UPDATE STOCK_ACCOUNT SET shares = shares - " + String.valueOf(shares) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
     //update, add money to balance (plus amount)
-    updateRow = "UPDATE ACCOUNT a set a.balance = a.balance + " + updatedAmount + " WHERE a.unique_id = '" + customerID + "'";
+    updateRow = "UPDATE ACCOUNT set balance = balance + " + String.valueOf(total) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
 
@@ -218,9 +214,10 @@ public class Customer {
 
 
     //insert to transaction
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + newquantity + "'," +updatedAmount +", " + ovbalance+")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + String.valueOf(shares) + "'," + String.valueOf(total) + ", " + ovbalance+")";
 		stmt.executeUpdate(insertData);
       
+    System.out.println("Sell stock transaction completed");
 
   }
 
@@ -236,7 +233,7 @@ public class Customer {
       System.exit(1);
     }
     
-    String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance + " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
+    String updateRow = "UPDATE ACCOUNT SET balance = balance + " + moneyAmount + " WHERE unique_id = '" + customerID + "'";
 
     Statement stmt = myC.getConnection().createStatement();
     stmt.executeUpdate(updateRow);
@@ -285,17 +282,16 @@ public class Customer {
       currBalance = (rs.getString("balance"));
     }
 
-    int p=Integer.parseInt(currBalance);
-    int i=Integer.parseInt(moneyAmount);
+    double balance = Double.parseDouble(currBalance);
+    double withdrawAmount = Double.parseDouble(moneyAmount);
 
 
-    if(i>p){
+    if(withdrawAmount>balance){
       System.out.println("You don't have enough in your balance");
       System.exit(1);
     }
-    moneyAmount = String.valueOf(i);
 
-    String updateRow = "UPDATE ACCOUNT a set a.balance = a.balance - " + moneyAmount + " WHERE a.unique_id = '" + customerID + "'";
+    String updateRow = "UPDATE ACCOUNT set balance = balance - " + String.valueOf(withdrawAmount) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
 
@@ -311,12 +307,12 @@ public class Customer {
     }
     //add to transaction
 
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + moneyAmount+ ", "+ ovbalance+")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + String.valueOf(withdrawAmount)+ ", "+ ovbalance+")";
       
 		
 		stmt.executeUpdate(insertData);
 
-
+    System.out.println("Withdraw transaction completed");
   }
 
 
