@@ -78,7 +78,7 @@ public class Customer {
     double balance = -(total+20);
 
     //add to transaction table
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' buy ','" + String.valueOf(shares) + "'," + String.valueOf(balance) + ", "+ String.valueOf(adujusted_balance) +")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','buy','" + String.valueOf(shares) + "'," + String.valueOf(balance) + ", "+ String.valueOf(adujusted_balance) +")";
 		stmt.executeUpdate(insertData);
 
 
@@ -215,7 +215,7 @@ public class Customer {
 
 
     //insert to transaction
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' sell ','" + String.valueOf(shares) + "'," + String.valueOf(total) + ", " + ovbalance+")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','sell','" + String.valueOf(shares) + "'," + String.valueOf(total) + ", " + ovbalance+")";
 		stmt.executeUpdate(insertData);
       
     System.out.println("Sell stock transaction completed");
@@ -252,7 +252,7 @@ public class Customer {
 
 
     //add to transaction
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' deposit ',0," + moneyAmount+ ", " + ovbalance +")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','deposit',0," + moneyAmount+ ", " + ovbalance +")";
       
 		
 		stmt.executeUpdate(insertData);
@@ -310,7 +310,7 @@ public class Customer {
     }
     //add to transaction
 
-    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "',' withdrawal ',0,-" + String.valueOf(withdrawAmount)+ ", "+ ovbalance+")";
+    String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','withdrawal',0,-" + String.valueOf(withdrawAmount)+ ", "+ ovbalance+")";
       
 		
 		stmt.executeUpdate(insertData);
