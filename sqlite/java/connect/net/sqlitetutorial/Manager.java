@@ -78,16 +78,17 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE  (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
     // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE AND (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.balance) >= 10000;
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
-
+    System.out.println();
     while (rs.next()){
       System.out.println("Name: "+ rs.getString("_name"));
       System.out.println("State: "+ rs.getString("_state"));
     }
+    System.out.println();
   }
 
 
