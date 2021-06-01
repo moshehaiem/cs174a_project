@@ -24,10 +24,13 @@ public class Manager {
     String queryResult4 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND strftime('%Y', t._date) = strftime('%Y', "+curr_date+") AND (t.trans_type = 'buy' OR t.trans_type = 'sell')";
     
     Statement stmt = myC.getConnection().createStatement();
+    Statement stmt2 = myC.getConnection().createStatement();
+    Statement stmt3 = myC.getConnection().createStatement();
+    Statement stmt4 = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
-    ResultSet rs2 = stmt.executeQuery(queryResult2);
-    ResultSet rs3 = stmt.executeQuery(queryResult3);
-    ResultSet rs4 = stmt.executeQuery(queryResult4);
+    ResultSet rs2 = stmt2.executeQuery(queryResult2);
+    ResultSet rs3 = stmt3.executeQuery(queryResult3);
+    ResultSet rs4 = stmt4.executeQuery(queryResult4);
         
     while (rs.next()){
       System.out.println("Name: "+ rs.getString("_name"));
