@@ -198,7 +198,7 @@ public class Customer {
 		stmt.executeUpdate(updateRow);
 
     //update, add money to balance (plus amount)
-    updateRow = "UPDATE ACCOUNT set balance = balance + " + String.valueOf(total) + " WHERE unique_id = '" + customerID + "'";
+    updateRow = "UPDATE ACCOUNT set balance = balance + " + String.valueOf(total-20) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
 
