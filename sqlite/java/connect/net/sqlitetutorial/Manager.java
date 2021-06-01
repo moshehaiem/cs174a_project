@@ -74,7 +74,7 @@ public class Manager {
 
   public void generateDTER() throws SQLException{
     String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (t.username = c.username) AND (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"'))";
-    
+
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
