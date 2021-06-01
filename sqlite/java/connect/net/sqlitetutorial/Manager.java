@@ -58,7 +58,7 @@ public class Manager {
 
 
   public void listActiveCustomers() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (t.username = c.username) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND (SUM(t.shares) >= 1000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"'))";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.shares) >= 1000;";
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
@@ -74,7 +74,7 @@ public class Manager {
 
   public void generateDTER() throws SQLException{
     String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (t.username = c.username) AND (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"'))";
-
+    // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.shares) >= 1000;
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
@@ -103,31 +103,32 @@ public class Manager {
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
-    ResultSet rs2 = stmt.executeQuery(queryResult2);
-
-
+    
+    System.out.println();
     while (rs.next()){
       String market_active = rs.getString("unique_id");
       System.out.println("current balance: $" + rs.getString("balance"));
-
+      
       if(market_active.trim().equals("")){
         System.out.println("User does not have active market account");
       }else{
         System.out.println("User has active market account");
       }
-
+      
     }
-
+    
+    ResultSet rs2 = stmt.executeQuery(queryResult2);
     while (rs2.next()){
       String stock_active = rs2.getString("unique_id");
       if(stock_active.trim().equals("")){
         System.out.println("User does not have active stock account");
       }else{  
-        System.out.println("User has active stock account");
+        System.out.println("User has active stock account for: " + rs2.getString("symbol"));
       }
-
+      
     }
-
+    
+    System.out.println();
 
 
   }
@@ -138,7 +139,7 @@ public class Manager {
     String queryResult = "DELETE FROM TRANSACTIONS";
 
     Statement stmt = myC.getConnection().createStatement();
-    stmt.executeQuery(queryResult);
+    stmt.executeUpdate(queryResult);
 
   }
 
