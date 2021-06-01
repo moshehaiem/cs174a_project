@@ -30,14 +30,16 @@ public class Manager {
     ResultSet rs = stmt.executeQuery(queryResult);
     ResultSet rs2 = stmt2.executeQuery(queryResult2);
     ResultSet rs3 = stmt3.executeQuery(queryResult3);
-    ResultSet rs4 = stmt4.executeQuery(queryResult4);
+    
         
     while (rs.next()){
       System.out.println("Name: "+ rs.getString("_name"));
       System.out.println("Email: "+ rs.getString("email_address"));
 
       String initb = rs2.getString("overall_balance");
+      rs2.next();
       String finalb = rs3.getString("overall_balance");
+      rs3.next();
 
       System.out.println("Initial balance: $"+ initb);
       System.out.println("Final balance: $"+ finalb);
@@ -48,7 +50,7 @@ public class Manager {
 
       System.out.println("Total earnings: $"+ String.valueOf(finalB));
 
-
+      ResultSet rs4 = stmt4.executeQuery(queryResult4);
       int count = 0;
       while(rs4.next()){
         count++;
