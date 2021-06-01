@@ -16,74 +16,107 @@ public class Manager {
     //find the latest date of the month and earliest date of month, and in those dates, find the balance associated
     //total commision payed = amount of transactions that are buy and sell * 20 
 
-
-    String cust_id="";
-    System.out.println("customer id:");
+    String username = "";
+    System.out.println("customer username:");
       
     try {
-      cust_id = br.readLine();
+      username = br.readLine();
     } catch (IOException ioe) {
       System.out.println("Not an option for id");
       System.exit(1);
     }
 
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.unique_id = '"+cust_id+"' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+    String q1 = "SELECT * FROM CUSTOMER c WHERE c.username = '" + username + "'";
+    String q2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.username = '" + username + "' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+    String q3 = "SELECT *, MIN(t._date) FROM TRANSACTIONS t WHERE strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+    String q4 = "SELECT *, MAX(t._date) FROM TRANSACTIONS t WHERE strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
 
-    String queryResult2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.unique_id = '"+cust_id+"' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"') AND strftime('%d', t._date) = MIN(SELECT strftime('%d', t2._date) FROM TRANSACTIONS t2, CUSTOMER c2 WHERE t2.username = c2.username AND strftime('%m', t2._date) = strftime('%m', '"+curr_date+"'))";
-
-    String queryResult3 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.unique_id = '"+cust_id+"' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"') AND strftime('%d', t._date) = MAX(SELECT strftime('%d', t2._date) FROM TRANSACTIONS t2, CUSTOMER c2 WHERE t2.username = c2.username AND strftime('%m', t2._date) = strftime('%m', '"+curr_date+"'))";
-
-    String queryResult4 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.unique_id = '"+cust_id+"' AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND strftime('%Y', t._date) = strftime('%Y', "+curr_date+") AND (t.trans_type = 'buy' OR t.trans_type = 'sell')";
-    
     Statement stmt = myC.getConnection().createStatement();
-    Statement stmt2 = myC.getConnection().createStatement();
-    Statement stmt3 = myC.getConnection().createStatement();
-    Statement stmt4 = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(q1);
 
-    ResultSet rs = stmt.executeQuery(queryResult);
-    ArrayList<String> name = new ArrayList<String>();
-    ArrayList<String> email = new ArrayList<String>();
+    String name = "";
+    String email = "";
+
     while (rs.next()){
-      name.add(rs.getString("_name"));
-      email.add(rs.getString("email_address"));
+      name = rs.getString("_name");
+      email = rs.getString("email_address");
     }
 
-    ResultSet rs2 = stmt2.executeQuery(queryResult2);
-    ArrayList<String> initb = new ArrayList<String>();
-    while(rs2.next()){
-      initb.add(rs2.getString("overall_balance"));
+    System.out.println("\nName: " + name + "\nEmail: " + email + "\n\nMarket Account Statement:\n");
+
+    ResultSet rs2 = stmt.executeQuery(q2);
+
+    while (rs2.next()){
+      if (!rs2.getString("trans_type").contains("buy") && !rs2.getString("trans_type").contains("sell")) {
+        System.out.println("Date of transaction: ");
+        System.out.println((rs2.getString("_date")));
+  
+        System.out.println("Transaction type: ");
+        System.out.println((rs2.getString("trans_type")));
+  
+        System.out.println("Overall shares bought and sold: ");
+        System.out.println((rs2.getString("shares")));
+  
+        System.out.print("Money transacted: \n$");
+        System.out.println((rs2.getString("balance")));
+  
+        System.out.print("Overall balance: \n$");
+        System.out.println((rs2.getString("overall_balance")));
+  
+        System.out.println("________________________________");
+        System.out.println();
+      }
     }
 
-
-    ResultSet rs3 = stmt3.executeQuery(queryResult3);
-    ArrayList<String> finalb = new ArrayList<String>();
-    while(rs3.next()){
-      finalb.add(rs3.getString("overall_balance"));
+    ResultSet rs3 = stmt.executeQuery(q2);
+    System.out.println("\n\n");
+    System.out.println("Stock Account Statement: \n");
+    int count = 0;
+    while (rs3.next()){
+      if (rs2.getString("trans_type").contains("buy") || rs2.getString("trans_type").contains("sell")) {
+        count++;
+        System.out.println("Date of transaction: ");
+        System.out.println((rs3.getString("_date")));
+  
+        System.out.println("Transaction type: ");
+        System.out.println((rs3.getString("trans_type")));
+  
+        System.out.println("Overall shares bought and sold: ");
+        System.out.println((rs3.getString("shares")));
+  
+        System.out.print("Money transacted: \n$");
+        System.out.println((rs3.getString("balance")));
+  
+        System.out.print("Overall balance: \n$");
+        System.out.println((rs3.getString("overall_balance")));
+  
+        System.out.println("________________________________");
+        System.out.println();
+      }
     }
 
+    ResultSet rs4 = stmt.executeQuery(q3);
+    String beginning_bal = "";
+    while (rs4.next()){
+      beginning_bal = rs4.getString("overall_balance");
+    }
 
-    ResultSet rs4 = stmt4.executeQuery(queryResult4);
-    ArrayList<String> commission = new ArrayList<String>();
-    while(rs4.next()){
-      int am = Integer.parseInt(rs4.getString("COUNT(buy and sell)")) * 20;
-      commission.add(String.valueOf(am));
+    ResultSet rs5 = stmt.executeQuery(q4);
+    String ending_bal = "";
+    while (rs5.next()){
+      ending_bal = rs5.getString("overall_balance");
     }
-    
-    for(int i = 0; i < name.size(); i++){
-      System.out.println();
-      System.out.println("____________________________");
-      System.out.println("Name: "+name.get(i));
-      System.out.println("Email: " + email.get(i));
-      System.out.println("Initial Balance: $"+ initb.get(i));
-      System.out.println("Final Balance: $"+ finalb.get(i));
-      double initBt = Double.parseDouble(initb.get(i));
-      double finalBt = Double.parseDouble(finalb.get(i));
-      finalBt -= initBt;
-      System.out.println("Total earnings: $"+ String.valueOf(finalBt));
-      System.out.println("Commision payed: $"+commission.get(i));
-    }
+
+    double total_change = Double.parseDouble(ending_bal) - Double.parseDouble(beginning_bal);
+    System.out.println("\n\n");
+    System.out.println("Initial Balance: $" + beginning_bal);
+    System.out.println("Final Balance: $" + ending_bal);
+    System.out.println("Total earned: $" + total_change);
+    System.out.println("Total commision payed: $" + String.valueOf(count * 20));
     System.out.println();
+
   }
+
 
 
   public void listActiveCustomers() throws SQLException{
@@ -91,7 +124,7 @@ public class Manager {
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
-
+    System.out.println("\n\n");
     int count = 1;
     while (rs.next()){
       System.out.println(count + ") "+ rs.getString("_name"));
@@ -102,16 +135,19 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE  (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
     // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE AND (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.balance) >= 10000;
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
-
+    System.out.println("\n\n");
     while (rs.next()){
       System.out.println("Name: "+ rs.getString("_name"));
       System.out.println("State: "+ rs.getString("_state"));
+      System.out.println();
+      System.out.println("______________");
     }
+    System.out.println();
   }
 
 
@@ -136,7 +172,7 @@ public class Manager {
     System.out.println();
     while (rs.next()){
       String market_active = rs.getString("unique_id");
-      System.out.println("current balance: $" + rs.getString("balance"));
+      System.out.println("Current balance: $" + rs.getString("balance"));
       
       if(market_active.trim().equals("")){
         System.out.println("User does not have active market account");
@@ -145,6 +181,7 @@ public class Manager {
       }
       
     }
+    System.out.println();
     
     ResultSet rs2 = stmt.executeQuery(queryResult2);
     while (rs2.next()){
@@ -169,6 +206,8 @@ public class Manager {
 
     Statement stmt = myC.getConnection().createStatement();
     stmt.executeUpdate(queryResult);
+    System.out.println("Transactions deleted!");
+    System.out.println();
 
   }
 
@@ -192,6 +231,7 @@ public class Manager {
     boolean continueAccess = true;
     
     while (continueAccess == true){
+      System.out.println();
       System.out.println("Next action:");
       try{
         command = br.readLine();

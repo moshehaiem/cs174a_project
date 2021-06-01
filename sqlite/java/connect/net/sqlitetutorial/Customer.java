@@ -130,7 +130,7 @@ public class Customer {
     updateRow = "UPDATE STOCK_ACCOUNT set shares = shares + " + String.valueOf(shares) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
-    System.out.println("Buy stock transaction complete");
+    System.out.println("Buy stock transaction completed");
   }
 
 
@@ -198,7 +198,7 @@ public class Customer {
 		stmt.executeUpdate(updateRow);
 
     //update, add money to balance (plus amount)
-    updateRow = "UPDATE ACCOUNT set balance = balance + " + String.valueOf(total) + " WHERE unique_id = '" + customerID + "'";
+    updateRow = "UPDATE ACCOUNT set balance = balance + " + String.valueOf(total-20) + " WHERE unique_id = '" + customerID + "'";
 		stmt.executeUpdate(updateRow);
 
 
@@ -257,7 +257,7 @@ public class Customer {
 		
 		stmt.executeUpdate(insertData);
 
-    System.out.println("Deposit transaction complete");
+    System.out.println("Deposit transaction completed");
   }
 
 
@@ -352,13 +352,13 @@ public class Customer {
       System.out.println("Transaction type: ");
       System.out.println((rs.getString("trans_type")));
 
-      System.out.println("overall shares bought and sold: ");
+      System.out.println("Overall shares bought and sold: ");
       System.out.println((rs.getString("shares")));
 
-      System.out.print("money transacted \n$");
+      System.out.print("Money transacted: \n$");
       System.out.println((rs.getString("balance")));
 
-      System.out.print("overall balance \n$");
+      System.out.print("Overall balance: \n$");
       System.out.println((rs.getString("overall_balance")));
 
       System.out.println("________________________________");
@@ -446,6 +446,7 @@ public class Customer {
       System.out.println("Year: "+ (rs.getString("_year")));
       System.out.println("Genre: "+ (rs.getString("genre")));
       System.out.println("Ratings: "+ (rs.getString("ratings")));
+      System.out.println();
       System.out.println("_______________________________________________");
       System.out.println();
     }
@@ -466,6 +467,7 @@ public class Customer {
     boolean continueAccess = true;
     
     while (continueAccess == true){
+      System.out.println();
       System.out.println("Next action:");
       try{
         command = br.readLine();
