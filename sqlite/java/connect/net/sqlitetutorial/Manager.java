@@ -1,6 +1,7 @@
 package net.sqlitetutorial;
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Manager {
   private String managerID;
@@ -27,38 +28,50 @@ public class Manager {
     Statement stmt2 = myC.getConnection().createStatement();
     Statement stmt3 = myC.getConnection().createStatement();
     Statement stmt4 = myC.getConnection().createStatement();
+
     ResultSet rs = stmt.executeQuery(queryResult);
-    ResultSet rs2 = stmt2.executeQuery(queryResult2);
-    ResultSet rs3 = stmt3.executeQuery(queryResult3);
-    
-        
+    ArrayList<String> name = new ArrayList<String>();
+    ArrayList<String> email = new ArrayList<String>();
     while (rs.next()){
-      System.out.println("Name: "+ rs.getString("_name"));
-      System.out.println("Email: "+ rs.getString("email_address"));
-
-      String initb = rs2.getString("overall_balance");
-      rs2.next();
-      String finalb = rs3.getString("overall_balance");
-      rs3.next();
-
-      System.out.println("Initial balance: $"+ initb);
-      System.out.println("Final balance: $"+ finalb);
-
-      double initB = Double.parseDouble(initb);
-      double finalB = Double.parseDouble(finalb);
-      finalB -= initB;
-
-      System.out.println("Total earnings: $"+ String.valueOf(finalB));
-
-      ResultSet rs4 = stmt4.executeQuery(queryResult4);
-      int count = 0;
-      while(rs4.next()){
-        count++;
-      }
-      System.out.println("Commision payed: $"+ String.valueOf(count*20));
-      
+      name.add(rs.getString("_name"));
+      email.add(rs.getString("email_address"));
     }
 
+    ResultSet rs2 = stmt2.executeQuery(queryResult2);
+    ArrayList<String> initb = new ArrayList<String>();
+    while(rs2.next()){
+      initb.add(rs2.getString("overall_balance"));
+    }
+
+
+    ResultSet rs3 = stmt3.executeQuery(queryResult3);
+    ArrayList<String> finalb = new ArrayList<String>();
+    while(rs3.next()){
+      finalb.add(rs3.getString("overall_balance"));
+    }
+
+
+    ResultSet rs4 = stmt4.executeQuery(queryResult4);
+    ArrayList<String> commission = new ArrayList<String>();
+    while(rs4.next()){
+      int am = Integer.parseInt(rs4.getString("COUNT(buy and sell)")) * 20;
+      commission.add(String.valueOf(am));
+    }
+    
+    for(int i = 0; i < name.size(); i++){
+      System.out.println();
+      System.out.println("____________________________");
+      System.out.println("Name: "+name.get(i));
+      System.out.println("Email: " + email.get(i));
+      System.out.println("Initial Balance: $"+ initb.get(i));
+      System.out.println("Final Balance: $"+ finalb.get(i));
+      double initBt = Double.parseDouble(initb.get(i));
+      double finalBt = Double.parseDouble(finalb.get(i));
+      finalBt -= initBt;
+      System.out.println("Total earnings: $"+ String.valueOf(finalBt));
+      System.out.println("Commision payed: $"+commission.get(i));
+    }
+    System.out.println();
   }
 
 
