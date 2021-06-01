@@ -15,13 +15,13 @@ public class Manager {
     //find the latest date of the month and earliest date of month, and in those dates, find the balance associated
     //total commision payed = amount of transactions that are buy and sell * 20 
 
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+")";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
 
-    String queryResult2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND strftime('%d', t._date) = (SELECT * FROM TRANSACTIONS t WHERE t._date)";
+    String queryResult2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"') AND strftime('%d', t._date) = MIN(SELECT strftime('%d', t2._date) FROM TRANSACTIONS t2, CUSTOMER c2 WHERE t2.username = c2.username AND strftime('%m', t2._date) = strftime('%m', '"+curr_date+"'))";
 
-    String queryResult3 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND strftime('%d', t._date) = (SELECT * FROM TRANSACTIONS t WHERE t._date)";
+    String queryResult3 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"') AND strftime('%d', t._date) = MAX(SELECT strftime('%d', t2._date) FROM TRANSACTIONS t2, CUSTOMER c2 WHERE t2.username = c2.username AND strftime('%m', t2._date) = strftime('%m', '"+curr_date+"'))";
 
-    String queryResult4 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND (t.trans_type = " + "'" + "buy" + "'" + "OR t.trans_type = "+ "'" + "sell"+ "'" + ")";
+    String queryResult4 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND strftime('%m', t._date) = strftime('%m', "+curr_date+") AND strftime('%Y', t._date) = strftime('%Y', "+curr_date+") AND (t.trans_type = 'buy' OR t.trans_type = 'sell')";
     
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
@@ -73,8 +73,8 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (t.username = c.username) AND (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"'))";
-    // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.shares) >= 1000;
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE  (SUM(t.balance) >= 10000) AND (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', 't._date') = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
+    // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE AND (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.balance) >= 10000;
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
