@@ -154,7 +154,7 @@ public class Manager {
 
   public void getCusomterReport() throws SQLException{
     String cust_id="";
-    System.out.println("customer id:");
+    System.out.println("Customer id:");
       
     try {
       cust_id = br.readLine();
@@ -213,7 +213,22 @@ public class Manager {
 
 
   public void addInterest() throws SQLException{
+    String queryResult = "SELECT date('"+ curr_date+"','start of month','+1 month','-1 day')";
 
+    Statement stmt = myC.getConnection().createStatement();
+    ResultSet rs = stmt.executeQuery(queryResult);
+    if (!rs.getString("date('"+ curr_date+"','start of month','+1 month','-1 day')").trim().equals(curr_date)){
+      System.out.println("Not the end of month.");
+      System.exit(1);
+    }else{
+      //for each customer, find days of transactions in the current month and year (for ex, 2021-05-01, 2021-05-09, 2021-05-22). 
+      //Then find  balance from 01, 09, and 22. So this means that 01-09 is balance from 01, 09-22 is balance from 09, and 22-EOM is balance from 22
+      //Then add to their current balance  (((9-1)*balance from 01 + (22-9)*balance from 09 + (EOM-22)*balance from 22) / DOM ) * .02
+
+
+
+      System.out.println("Interest Added!");
+    }
   }
     
     
