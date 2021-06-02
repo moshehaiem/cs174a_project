@@ -415,40 +415,79 @@ public class Customer {
   public void listMovieInformation() throws SQLException{
     String year1 = "";
     String year2 = "";
-    System.out.println("year range 1: ");
+    String choice = "";
+    String movie_option = "";
+
+    System.out.println("Would you like information on a specific movie or search through years movie was created? ");
     try {
-      year1 = br.readLine();
+      choice = br.readLine();
     } catch (IOException ioe) {
-      System.out.println("Not an option for year");
+      System.out.println("Not an option for choice");
       System.exit(1);
     }
-    System.out.println("year range 2: ");
-    try {
-      year2 = br.readLine();
-    } catch (IOException ioe) {
-      System.out.println("Not an option for year");
-      System.exit(1);
-    }
+    if (choice.trim().equals("specific")){
+      System.out.println("Which movie? ");
+      try {
+        movie_option = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("Not an option for movie");
+        System.exit(1);
+      }
 
-    //strftime('%y', m.date)    
-    //find all movies in between the two years
+      String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE movie_title >= '" +movie_option +"'";
+          
+      Statement stmt = myC.getConnection().createStatement();
+          
+      ResultSet rs = stmt.executeQuery(queryResult);
 
-    String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE _year<= '" + year2 + "' AND _year >= '" +year1 +"'";
-        
-    Statement stmt = myC.getConnection().createStatement();
-        
-    ResultSet rs = stmt.executeQuery(queryResult);
-
-    System.out.println();
-    //display movie info in those years
-    while (rs.next()){
-      System.out.println("Movie Title: "+ (rs.getString("movie_title")));
-      System.out.println("Year: "+ (rs.getString("_year")));
-      System.out.println("Genre: "+ (rs.getString("genre")));
-      System.out.println("Ratings: "+ (rs.getString("ratings")));
       System.out.println();
-      System.out.println("_______________________________________________");
+      //display movie info in those years
+      while (rs.next()){
+        System.out.println("Movie Title: "+ movie_option));
+        System.out.println("Year: "+ (rs.getString("_year")));
+        System.out.println("Genre: "+ (rs.getString("genre")));
+        System.out.println("Ratings: "+ (rs.getString("ratings")));
+        System.out.println();
+        System.out.println("_______________________________________________");
+        System.out.println();
+      }
+
+    }else{
+      System.out.println("Year range 1: ");
+      try {
+        year1 = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("Not an option for year");
+        System.exit(1);
+      }
+      System.out.println("Year range 2: ");
+      try {
+        year2 = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("Not an option for year");
+        System.exit(1);
+      }
+
+      //strftime('%y', m.date)    
+      //find all movies in between the two years
+
+      String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE _year<= '" + year2 + "' AND _year >= '" +year1 +"'";
+          
+      Statement stmt = myC.getConnection().createStatement();
+          
+      ResultSet rs = stmt.executeQuery(queryResult);
+
       System.out.println();
+      //display movie info in those years
+      while (rs.next()){
+        System.out.println("Movie Title: "+ (rs.getString("movie_title")));
+        System.out.println("Year: "+ (rs.getString("_year")));
+        System.out.println("Genre: "+ (rs.getString("genre")));
+        System.out.println("Ratings: "+ (rs.getString("ratings")));
+        System.out.println();
+        System.out.println("_______________________________________________");
+        System.out.println();
+      }
     }
   }
 
