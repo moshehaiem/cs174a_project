@@ -135,8 +135,8 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
-    // SELECT * FROM TRANSACTIONS t, CUSTOMER c  WHERE AND (strftime('%m', t._date) = strftime('%m', '2021-05-31')) AND (strftime('%Y', t._date) = strftime('%Y', '2021-05-31')) AND (t.trans_type = 'buy' OR t.trans_type = 'sell') AND c.username = t.username GROUP BY c._name HAVING SUM(t.balance) >= 10000;
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.date < '"+curr_date+"' AND t.date > DATE('"+curr_date+"','-1 month') AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
+    // String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
 
@@ -217,7 +217,7 @@ public class Manager {
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
     while(rs.next()){
-      
+
     }
     
     //for each customer, find days of transactions in the current month and year (for ex, 2021-05-01, 2021-05-09, 2021-05-22). 
