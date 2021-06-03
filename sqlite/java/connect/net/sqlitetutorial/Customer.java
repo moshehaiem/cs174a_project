@@ -434,7 +434,7 @@ public class Customer {
         System.exit(1);
       }
 
-      String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE movie_title >= '" +movie_option +"'";
+      String queryResult = "SELECT * FROM MOVIE_CONTRACT m WHERE movie_title = '" +movie_option +"'";
           
       Statement stmt = myC.getConnection().createStatement();
           
@@ -443,7 +443,7 @@ public class Customer {
       System.out.println();
       //display movie info in those years
       while (rs.next()){
-        System.out.println("Movie Title: "+ movie_option));
+        System.out.println("Movie Title: "+ movie_option);
         System.out.println("Year: "+ (rs.getString("_year")));
         System.out.println("Genre: "+ (rs.getString("genre")));
         System.out.println("Ratings: "+ (rs.getString("ratings")));
