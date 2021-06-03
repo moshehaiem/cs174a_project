@@ -2,6 +2,9 @@ package net.sqlitetutorial;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Date;
 
 public class Manager {
   private String managerID;
@@ -216,19 +219,27 @@ public class Manager {
     String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username=c.username AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
+    double avg_balance = 0;
+    int prev_day = 0;
+    String _month = curr_date.substring(5, 7);
+    String _year = curr_date.substring(0, 4);
+    YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
+    int daysOfMonth = yearMonthObject.lengthOfMonth();
     while(rs.next()){
-
+      Double bal = rs.getDouble("balance");
+      Double ov_bal = rs.getDouble("overall_balance");
+      String temp_date = rs.getString("date");
+      String dayOfTransaction = temp_date.substring(8);
+      avg_balance+=(ov_bal+bal)*(Integer.parseInt(dayOfTransaction)-prev_day);
+      if(!rs.next()){
+        avg_balance+=ov_bal*(daysOfMonth-Integer.parseInt(dayOfTransaction));
+      }
+      prev_day=Integer.parseInt(dayOfTransaction);
     }
-    
-    //for each customer, find days of transactions in the current month and year (for ex, 2021-05-01, 2021-05-09, 2021-05-22). 
-    //Then find  balance from 01, 09, and 22. So this means that 01-09 is balance from 01, 09-22 is balance from 09, and 22-EOM is balance from 22
-    //Then add to their current balance  (((9-1)*balance from 01 + (22-9)*balance from 09 + (EOM-22)*balance from 22) / DOM ) * .02
-
-
+    avg_balance/=daysOfMonth;
 
 
     System.out.println("Interest Added!");
-    
   }
     
     
