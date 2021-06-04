@@ -55,7 +55,7 @@ public class Manager {
         System.out.println((rs2.getString("trans_type")));
   
         System.out.println("Overall shares bought and sold: ");
-        System.out.println((rs2.getString("shares")));
+        System.out.println(String.format("%.3f", Double.parseDouble((rs2.getString("shares")))));
   
         System.out.print("Money transacted: \n$");
         System.out.println(String.format("%.2f", Double.parseDouble((rs2.getString("balance")))));
@@ -82,7 +82,7 @@ public class Manager {
         System.out.println((rs3.getString("trans_type")));
   
         System.out.println("Overall shares bought and sold: ");
-        System.out.println((rs3.getString("shares")));
+        System.out.println(String.format("%.3f", Double.parseDouble((rs3.getString("shares")))));
   
         System.out.print("Money transacted: \n$");
         System.out.println(String.format("%.2f", Double.parseDouble((rs3.getString("balance")))));
