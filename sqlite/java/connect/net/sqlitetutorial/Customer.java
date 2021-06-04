@@ -452,7 +452,7 @@ public class Customer {
         System.out.println();
       }
 
-    }else{
+    }else if (choice.trim().equals("range")){
       System.out.println("Year range 1: ");
       try {
         year1 = br.readLine();
@@ -466,7 +466,7 @@ public class Customer {
       } catch (IOException ioe) {
         System.out.println("Not an option for year");
         System.exit(1);
-      }
+      } 
 
       //strftime('%y', m.date)    
       //find all movies in between the two years
@@ -488,6 +488,9 @@ public class Customer {
         System.out.println("_______________________________________________");
         System.out.println();
       }
+    } else {
+      System.out.println("Not an option");
+      System.exit(1);
     }
   }
 

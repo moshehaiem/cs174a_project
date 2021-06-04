@@ -138,7 +138,7 @@ public class Manager {
 
 
   public void generateDTER() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.date < '"+curr_date+"' AND t.date > DATE('"+curr_date+"','-1 month') AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
+    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t._date < '"+curr_date+"' AND t._date > DATE('"+curr_date+"','-1 month') AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
     // String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE (strftime('%m', t._date) = strftime('%m', '"+curr_date+"')) AND (strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')) AND (t.username = c.username) GROUP BY c._name HAVING SUM(t.balance) >= 10000";
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
@@ -216,32 +216,50 @@ public class Manager {
 
 
   public void addInterest() throws SQLException{
-    String queryResult = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username=c.username AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+
     Statement stmt = myC.getConnection().createStatement();
-    ResultSet rs = stmt.executeQuery(queryResult);
-    double avg_balance = 0;
-    int prev_day = 0;
-    String _month = curr_date.substring(5, 7);
-    String _year = curr_date.substring(0, 4);
-    YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
-    int daysOfMonth = yearMonthObject.lengthOfMonth();
-    while(rs.next()){
-      Double bal = rs.getDouble("balance");
-      Double ov_bal = rs.getDouble("overall_balance");
-      String temp_date = rs.getString("date");
-      String dayOfTransaction = temp_date.substring(8);
-      avg_balance+=(ov_bal+bal)*(Integer.parseInt(dayOfTransaction)-prev_day);
-      if(!rs.next()){
-        avg_balance+=ov_bal*(daysOfMonth-Integer.parseInt(dayOfTransaction));
+    String q1 = "SELECT * FROM MARKET_ACCOUNT";
+    ResultSet rs1 = stmt.executeQuery(q1);
+    
+    while(rs1.next()) {
+      String username = rs1.getString("username");
+      String q2 = "SELECT * FROM TRANSACTIONS t WHERE t.username='" + username +"'";
+      Statement stmt1 = myC.getConnection().createStatement();
+      ResultSet rs = stmt1.executeQuery(q2);
+      double avg_balance = 0;
+      int prev_day = 0;
+      String _month = curr_date.substring(5, 7);
+      String _year = curr_date.substring(0, 4);
+      YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
+      int daysOfMonth = yearMonthObject.lengthOfMonth();
+      Double ov_bal = 0.0, bal = 0.0;
+      int dayOfTransaction = 0;
+      while(rs.next()){
+        ov_bal = rs.getDouble("overall_balance");
+        bal = rs.getDouble("balance");
+        String temp_date = rs.getString("_date");
+        dayOfTransaction = Integer.parseInt(temp_date.substring(8));
+
+        avg_balance+=(ov_bal-bal)*(dayOfTransaction-prev_day);
+        
+        prev_day=dayOfTransaction;
+        System.out.println(avg_balance);
       }
-      prev_day=Integer.parseInt(dayOfTransaction);
+      avg_balance+=ov_bal*(daysOfMonth-dayOfTransaction);
+      avg_balance/=daysOfMonth;
+      
+      
+      System.out.println(avg_balance);
+
     }
-    avg_balance/=daysOfMonth;
+
+
+
 
 
     System.out.println("Interest Added!");
   }
-    
+  
     
     
   public Manager(String _username, Connect conn, String uniqueID, String c_date){
