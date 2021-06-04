@@ -251,6 +251,12 @@ public class Manager {
 
       String updateRow = "UPDATE ACCOUNT SET balance = '"+avg_balance+"' WHERE unique_id = '" + un_id + "'";
 		  stmt.executeUpdate(updateRow);
+
+
+
+      String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','accrue', 0, 0, "+ String.valueOf(avg_balance) +")";
+		  stmt.executeUpdate(insertData);
+
     }
 
     System.out.println("Interest Added!");
