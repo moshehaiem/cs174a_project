@@ -214,14 +214,16 @@ public class Manager {
 
   public void addInterest() throws SQLException{
 
-    String query1 = "SELECT date('"+curr_date+"','start of month','+1 month','-1 day')";
-
-    Statement statement1 = myC.getConnection().createStatement();
-    ResultSet res1 = statement1.executeQuery(query1);
 
     
-    if(!(curr_date.trim().equals(res1.getString("*")))){
-
+    String _month = curr_date.substring(5, 7);
+    String _year = curr_date.substring(0, 4);
+    YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
+    int daysOfMonth = yearMonthObject.lengthOfMonth();
+    
+    if(Integer.parseInt(curr_date.substring(8)) != daysOfMonth){
+      System.out.println("Not the end of the month, cannot accrue interest");
+      return;
     }else{
       Statement stmt = myC.getConnection().createStatement();
       String q1 = "SELECT * FROM MARKET_ACCOUNT";
@@ -235,10 +237,6 @@ public class Manager {
         ResultSet rs = stmt1.executeQuery(q2);
         double avg_balance = 0;
         int prev_day = 0;
-        String _month = curr_date.substring(5, 7);
-        String _year = curr_date.substring(0, 4);
-        YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
-        int daysOfMonth = yearMonthObject.lengthOfMonth();
         Double ov_bal = 0.0, bal = 0.0;
         int dayOfTransaction = 0;
         while(rs.next()){
@@ -255,7 +253,6 @@ public class Manager {
         avg_balance/=daysOfMonth;
         
         Double interest = .02 * avg_balance;
-        avg_balance*=1.02;
 
 
 
