@@ -333,7 +333,7 @@ public class Customer {
       currBalance = (rs.getString("balance"));
     }
     System.out.println("Current Balance:");
-    System.out.println("$" + currBalance);
+    System.out.println("$" + String.format("%.2f", Double.parseDouble(currBalance)));
 
   }
 
@@ -356,10 +356,10 @@ public class Customer {
       System.out.println((rs.getString("shares")));
 
       System.out.print("Money transacted: \n$");
-      System.out.println((rs.getString("balance")));
+      System.out.println(String.format("%.2f", Double.parseDouble((rs.getString("balance")))));
 
       System.out.print("Overall balance: \n$");
-      System.out.println((rs.getString("overall_balance")));
+      System.out.println(String.format("%.2f", Double.parseDouble((rs.getString("overall_balance")))));
 
       System.out.println("________________________________");
       System.out.println();
@@ -401,14 +401,14 @@ public class Customer {
       price=(rs.getString("curr_price"));
     }
 
-    System.out.println("\nCurrent Price: $"+ price);
+    System.out.println("\nCurrent Price: $"+ String.format("%.2f", Double.parseDouble(price)));
     System.out.println("Actor/director name: "+ name);
     System.out.println("Stock symbol: "+ stock_type);
     System.out.println("Actor/director dob: "+ dob);
     System.out.println("Movie title: "+ movie_title);
     System.out.println("Role: "+ role);
     System.out.println("Year: "+ year);
-    System.out.println("Contract: $"+ total_value);
+    System.out.println("Contract: $"+ String.format("%.2f", Double.parseDouble(total_value)));
     System.out.println("");
   }
 

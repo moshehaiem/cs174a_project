@@ -58,10 +58,10 @@ public class Manager {
         System.out.println((rs2.getString("shares")));
   
         System.out.print("Money transacted: \n$");
-        System.out.println((rs2.getString("balance")));
+        System.out.println(String.format("%.2f", Double.parseDouble((rs2.getString("balance")))));
   
         System.out.print("Overall balance: \n$");
-        System.out.println((rs2.getString("overall_balance")));
+        System.out.println(String.format("%.2f", Double.parseDouble((rs2.getString("overall_balance")))));
   
         System.out.println("________________________________");
         System.out.println();
@@ -85,10 +85,10 @@ public class Manager {
         System.out.println((rs3.getString("shares")));
   
         System.out.print("Money transacted: \n$");
-        System.out.println((rs3.getString("balance")));
+        System.out.println(String.format("%.2f", Double.parseDouble((rs3.getString("balance")))));
   
         System.out.print("Overall balance: \n$");
-        System.out.println((rs3.getString("overall_balance")));
+        System.out.println(String.format("%.2f", Double.parseDouble((rs3.getString("overall_balance")))));
   
         System.out.println("________________________________");
         System.out.println();
@@ -109,10 +109,10 @@ public class Manager {
 
     double total_change = Double.parseDouble(ending_bal) - Double.parseDouble(beginning_bal);
     System.out.println("\n\n");
-    System.out.println("Initial Balance: $" + beginning_bal);
-    System.out.println("Final Balance: $" + ending_bal);
-    System.out.println("Total earned: $" + total_change);
-    System.out.println("Total commision payed: $" + String.valueOf(count * 20));
+    System.out.println("Initial Balance: $" + String.format("%.2f", Double.parseDouble(beginning_bal)));
+    System.out.println("Final Balance: $" + String.format("%.2f", Double.parseDouble(ending_bal)));
+    System.out.println("Total earned: $" + String.format("%.2f", total_change));
+    System.out.println("Total commision payed: $" + String.format("%.2f", count*20));
     System.out.println();
 
   }
@@ -172,7 +172,7 @@ public class Manager {
     System.out.println();
     while (rs.next()){
       String market_active = rs.getString("unique_id");
-      System.out.println("Current balance: $" + rs.getString("balance"));
+      System.out.println("Current balance: $" + String.format("%.2f", Double.parseDouble((rs.getString("balance")))));
       
       if(market_active.trim().equals("")){
         System.out.println("User does not have active market account");
