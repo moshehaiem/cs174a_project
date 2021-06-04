@@ -256,7 +256,6 @@ public class Login {
             
 			try {
 				st.executeUpdate(insertData);
-        System.out.println("Account succesfully created");
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -283,15 +282,27 @@ public class Login {
 							 " VALUES('" + newID + "','1000','" + taxId + "')";
       
       st = con.getConnection().createStatement();
-            
-			try {
-				st.executeUpdate(insertData);
-        System.out.println("Market account succesfully created. 1000$ automatically deposited.");
-			} catch (Exception e) {
-				System.out.println(e);
-			}
+      
+      try {
+        st.executeUpdate(insertData);
+      } catch (Exception e) {
+        System.out.println(e);
+      }
+      
+      String q = "INSERT INTO MARKET_ACCOUNT(username, unique_id)" + 
+      " VALUES('" + username + "','" + newID + "')";
+      
+      if (isManager.trim().equals("0")) {
+        try {
+          st.executeUpdate(q);
+        } catch (Exception e) {
+          System.out.println(e);
+        }
+        
+      }
 
-
+      System.out.println("Account successfully created.");
+      
 
     }
   }  

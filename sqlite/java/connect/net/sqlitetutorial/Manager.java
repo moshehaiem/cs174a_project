@@ -2,6 +2,7 @@ package net.sqlitetutorial;
 import java.io.*;
 import java.sql.*;
 import java.time.YearMonth;
+import java.util.ArrayList;
 
 public class Manager {
   private String managerID;
@@ -28,8 +29,8 @@ public class Manager {
 
     String q1 = "SELECT * FROM CUSTOMER c WHERE c.username = '" + username + "'";
     String q2 = "SELECT * FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.username = '" + username + "' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
-    String q3 = "SELECT *, MIN(t._date) FROM TRANSACTIONS t WHERE strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
-    String q4 = "SELECT *, MAX(t._date) FROM TRANSACTIONS t WHERE strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+    String q3 = "SELECT *, MIN(t._date) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.username = '" + username + "' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
+    String q4 = "SELECT *, MAX(t._date) FROM TRANSACTIONS t, CUSTOMER c WHERE t.username = c.username AND c.username = '" + username + "' AND strftime('%m', t._date) = strftime('%m', '"+curr_date+"') AND strftime('%Y', t._date) = strftime('%Y', '"+curr_date+"')";
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(q1);
@@ -96,9 +97,11 @@ public class Manager {
     }
 
     ResultSet rs4 = stmt.executeQuery(q3);
-    String beginning_bal = "";
+    Double beginning_bal = 0.0;
     while (rs4.next()){
-      beginning_bal = rs4.getString("overall_balance");
+      String beginning_ovBal = rs4.getString("overall_balance");
+      String beginning_balance = rs4.getString("balance");
+      beginning_bal = Double.parseDouble(beginning_ovBal) - Double.parseDouble(beginning_balance);
     }
 
     ResultSet rs5 = stmt.executeQuery(q4);
@@ -107,12 +110,12 @@ public class Manager {
       ending_bal = rs5.getString("overall_balance");
     }
 
-    double total_change = Double.parseDouble(ending_bal) - Double.parseDouble(beginning_bal);
+    double total_change = Double.parseDouble(ending_bal) - beginning_bal;
     System.out.println("\n\n");
-    System.out.println("Initial Balance: $" + String.format("%.2f", Double.parseDouble(beginning_bal)));
+    System.out.println("Initial Balance: $" + String.format("%.2f", beginning_bal));
     System.out.println("Final Balance: $" + String.format("%.2f", Double.parseDouble(ending_bal)));
     System.out.println("Total earned: $" + String.format("%.2f", total_change));
-    System.out.println("Total commision payed: $" + String.format("%.2f", count*20));
+    System.out.println("Total commision payed: $" + String.valueOf(count*20));
     System.out.println();
 
   }
@@ -153,18 +156,18 @@ public class Manager {
 
 
   public void getCusomterReport() throws SQLException{
-    String cust_id="";
-    System.out.println("Customer id:");
+    String username="";
+    System.out.println("username:");
       
     try {
-      cust_id = br.readLine();
+      username = br.readLine();
     } catch (IOException ioe) {
-      System.out.println("Not an option for id");
+      System.out.println("Not an option for username");
       System.exit(1);
     }
 
-    String queryResult = "SELECT * FROM ACCOUNT a WHERE a.unique_id = '"+cust_id+"'";
-    String queryResult2 = "SELECT * FROM STOCK_ACCOUNT s WHERE s.unique_id = '"+cust_id+"'";
+    String queryResult = "SELECT * FROM ACCOUNT a, CUSTOMER C WHERE a.tax_id = c.tax_id AND c.username = '" + username + "'";
+    String queryResult2 = "SELECT * FROM STOCK_ACCOUNT s WHERE s.username = '" + username + "'";
 
     Statement stmt = myC.getConnection().createStatement();
     ResultSet rs = stmt.executeQuery(queryResult);
@@ -228,13 +231,20 @@ public class Manager {
       Statement stmt = myC.getConnection().createStatement();
       String q1 = "SELECT * FROM MARKET_ACCOUNT";
       ResultSet rs1 = stmt.executeQuery(q1);
+
+      ArrayList<String> usernames = new ArrayList<String>( );
+      ArrayList<String> uid = new ArrayList<String>( );
+      while (rs1.next()) {
+        usernames.add(rs1.getString("username"));
+        uid.add(rs1.getString("unique_id"));
+      }
       
-      while(rs1.next()) {
-        String username = rs1.getString("username");
-        String un_id = rs1.getString("unique_id");
+      ResultSet rs;
+      for (int i=0; i<usernames.size(); i++) {
+        String username = usernames.get(i);
+        String un_id = uid.get(i);
         String q2 = "SELECT * FROM TRANSACTIONS t WHERE t.username='" + username +"'";
-        Statement stmt1 = myC.getConnection().createStatement();
-        ResultSet rs = stmt1.executeQuery(q2);
+        rs = myC.getConnection().createStatement().executeQuery(q2);
         double avg_balance = 0;
         int prev_day = 0;
         Double ov_bal = 0.0, bal = 0.0;
@@ -243,10 +253,13 @@ public class Manager {
           ov_bal = rs.getDouble("overall_balance");
           bal = rs.getDouble("balance");
           String temp_date = rs.getString("_date");
+          System.out.println(temp_date);
+          System.out.println(bal);
+          System.out.println(ov_bal);
           dayOfTransaction = Integer.parseInt(temp_date.substring(8));
 
           avg_balance+=(ov_bal-bal)*(dayOfTransaction-prev_day);
-          
+          System.out.println(avg_balance);
           prev_day=dayOfTransaction;
         }
         avg_balance+=ov_bal*(daysOfMonth-dayOfTransaction);
@@ -254,15 +267,15 @@ public class Manager {
         
         Double interest = .02 * avg_balance;
 
-
+        System.out.println(interest);
 
         String updateRow = "UPDATE ACCOUNT SET balance = balance + '"+interest+"' WHERE unique_id = '" + un_id + "'";
-        stmt.executeUpdate(updateRow);
+        myC.getConnection().createStatement().executeUpdate(updateRow);
 
 
 
         String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','accrue', 0, "+interest+", "+ String.valueOf(ov_bal+interest) +")";
-        stmt.executeUpdate(insertData);
+        myC.getConnection().createStatement().executeUpdate(insertData);
 
       }
     }
