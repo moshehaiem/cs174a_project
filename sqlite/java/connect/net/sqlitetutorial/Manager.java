@@ -214,50 +214,63 @@ public class Manager {
 
   public void addInterest() throws SQLException{
 
-    Statement stmt = myC.getConnection().createStatement();
-    String q1 = "SELECT * FROM MARKET_ACCOUNT";
-    ResultSet rs1 = stmt.executeQuery(q1);
+    String query1 = "SELECT date('"+curr_date+"','start of month','+1 month','-1 day')";
+
+    Statement statement1 = myC.getConnection().createStatement();
+    ResultSet res1 = statement1.executeQuery(query1);
+
     
-    while(rs1.next()) {
-      String username = rs1.getString("username");
-      String un_id = rs1.getString("unique_id");
-      String q2 = "SELECT * FROM TRANSACTIONS t WHERE t.username='" + username +"'";
-      Statement stmt1 = myC.getConnection().createStatement();
-      ResultSet rs = stmt1.executeQuery(q2);
-      double avg_balance = 0;
-      int prev_day = 0;
-      String _month = curr_date.substring(5, 7);
-      String _year = curr_date.substring(0, 4);
-      YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
-      int daysOfMonth = yearMonthObject.lengthOfMonth();
-      Double ov_bal = 0.0, bal = 0.0;
-      int dayOfTransaction = 0;
-      while(rs.next()){
-        ov_bal = rs.getDouble("overall_balance");
-        bal = rs.getDouble("balance");
-        String temp_date = rs.getString("_date");
-        dayOfTransaction = Integer.parseInt(temp_date.substring(8));
+    if(!(curr_date.trim().equals(res1.getString("*")))){
 
-        avg_balance+=(ov_bal-bal)*(dayOfTransaction-prev_day);
-        
-        prev_day=dayOfTransaction;
-      }
-      avg_balance+=ov_bal*(daysOfMonth-dayOfTransaction);
-      avg_balance/=daysOfMonth;
+    }else{
+      Statement stmt = myC.getConnection().createStatement();
+      String q1 = "SELECT * FROM MARKET_ACCOUNT";
+      ResultSet rs1 = stmt.executeQuery(q1);
       
-      avg_balance*=1.02;
+      while(rs1.next()) {
+        String username = rs1.getString("username");
+        String un_id = rs1.getString("unique_id");
+        String q2 = "SELECT * FROM TRANSACTIONS t WHERE t.username='" + username +"'";
+        Statement stmt1 = myC.getConnection().createStatement();
+        ResultSet rs = stmt1.executeQuery(q2);
+        double avg_balance = 0;
+        int prev_day = 0;
+        String _month = curr_date.substring(5, 7);
+        String _year = curr_date.substring(0, 4);
+        YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(_year), Integer.parseInt(_month));
+        int daysOfMonth = yearMonthObject.lengthOfMonth();
+        Double ov_bal = 0.0, bal = 0.0;
+        int dayOfTransaction = 0;
+        while(rs.next()){
+          ov_bal = rs.getDouble("overall_balance");
+          bal = rs.getDouble("balance");
+          String temp_date = rs.getString("_date");
+          dayOfTransaction = Integer.parseInt(temp_date.substring(8));
+
+          avg_balance+=(ov_bal-bal)*(dayOfTransaction-prev_day);
+          
+          prev_day=dayOfTransaction;
+        }
+        avg_balance+=ov_bal*(daysOfMonth-dayOfTransaction);
+        avg_balance/=daysOfMonth;
+        
+        Double interest = .02 * avg_balance;
+        avg_balance*=1.02;
 
 
 
-      String updateRow = "UPDATE ACCOUNT SET balance = '"+avg_balance+"' WHERE unique_id = '" + un_id + "'";
-		  stmt.executeUpdate(updateRow);
+        String updateRow = "UPDATE ACCOUNT SET balance = balance + '"+interest+"' WHERE unique_id = '" + un_id + "'";
+        stmt.executeUpdate(updateRow);
 
 
 
-      String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','accrue', 0, 0, "+ String.valueOf(avg_balance) +")";
-		  stmt.executeUpdate(insertData);
+        String insertData = "INSERT INTO TRANSACTIONS(username, _date, trans_type, shares, balance, overall_balance)" + " VALUES('" + username + "','" + curr_date + "','accrue', 0, "+interest+", "+ String.valueOf(ov_bal+interest) +")";
+        stmt.executeUpdate(insertData);
 
+      }
     }
+
+    
 
     System.out.println("Interest Added!");
   }
