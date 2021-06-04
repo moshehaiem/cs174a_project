@@ -253,13 +253,9 @@ public class Manager {
           ov_bal = rs.getDouble("overall_balance");
           bal = rs.getDouble("balance");
           String temp_date = rs.getString("_date");
-          System.out.println(temp_date);
-          System.out.println(bal);
-          System.out.println(ov_bal);
           dayOfTransaction = Integer.parseInt(temp_date.substring(8));
 
           avg_balance+=(ov_bal-bal)*(dayOfTransaction-prev_day);
-          System.out.println(avg_balance);
           prev_day=dayOfTransaction;
         }
         avg_balance+=ov_bal*(daysOfMonth-dayOfTransaction);
@@ -267,7 +263,6 @@ public class Manager {
         
         Double interest = .02 * avg_balance;
 
-        System.out.println(interest);
 
         String updateRow = "UPDATE ACCOUNT SET balance = balance + '"+interest+"' WHERE unique_id = '" + un_id + "'";
         myC.getConnection().createStatement().executeUpdate(updateRow);
